@@ -59,5 +59,27 @@ Omnia is a platform that provides **3D render hosting** services with **Augmente
 
 ---
 
+### Commit Message Format
+All commits must follow this format:
+`OMNIA: <File/Feature Name>`
+
+**Example:**
+OMNIA: Add AGENTS.md
+OMNIA: Setup NextAuth Google Provider
+OMNIA: Implement Render Upload API
+
+---
+
+### Pull Request Format
+
+#### TITLE
+#### DESCRIPTION
+Briefly describe what this Pull Request introduces, modifies, or fixes.
+
+#### SUMMARY
+Provide a checklist or bullet points summarizing the key changes introduced by this PR.
+
+---
+
 ### Short Summary for Codex Agents
 > *"Omnia is a SaaS platform where users upload 3D models (`.obj`/`.mtl`), hosted on AWS S3, and generate public AR visualization links. Users manage their renders in a private dashboard secured by Google login. Stack: Next.js 15, TypeScript, MongoDB, AWS S3, Chakra UI, Three.js."*
