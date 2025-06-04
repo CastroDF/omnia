@@ -1,21 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({ req });
-  const isAuth = !!token;
+export function middleware(req: NextRequest) {
+  // Lee la cookie manualmente porque no podés usar JWT ni getToken
+  const session = req.cookies.get('next-auth.session-token') || req.cookies.get('__Secure-next-auth.session-token');
+
+  const isAuth = !!session;
   const isDashboardRoute = req.nextUrl.pathname.startsWith('/dashboard');
 
+  console.log('[MIDDLEWARE] Is authenticated:', isAuth);
+
   if (isDashboardRoute && !isAuth) {
-    const url = req.nextUrl.clone();
-    url.pathname = '/api/auth/signin';
-    return NextResponse.redirect(url);
+    const signInUrl = new URL('/api/auth/signin', req.url);
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();
 }
 
-// Protect dashboard routes
 export const config = {
-  matcher: ['/dashboard/:path*']
+  matcher: ['/dashboard/:path*'], // Middleware se ejecuta solo en /dashboard/**
 };
