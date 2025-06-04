@@ -11,10 +11,13 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),
+  pages: {
+    signIn: '/login',
+  },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session, user }) {
       if (session?.user) {
-        session.user.id = token.sub!;
+        session.user.id = user.id;
       }
       return session;
     },

@@ -1,15 +1,12 @@
 'use client';
 
-import { Box, Heading } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import UploadRenderForm from '@/components/UploadRenderForm';
 
-const UploadRenderPage: React.FC = () => {
+export default function UploadPage() {
   return (
-    <Box p={ 8 }>
-      <Heading size="lg" mb={ 6 }>Upload New Render</Heading>
+    <Container maxW="2xl" py={10}>
       <UploadRenderForm />
-    </Box>
+    </Container>
   );
-};
-
-export default UploadRenderPage;
+}
