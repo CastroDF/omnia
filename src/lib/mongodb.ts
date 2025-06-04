@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI!;
+const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@omnia-cluster.dnwcklu.mongodb.net/?retryWrites=true&w=majority&appName=omnia-cluster`;
 const options = {};
 
 let client;
