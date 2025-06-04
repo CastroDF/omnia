@@ -7,19 +7,23 @@ const AuthButton: React.FC = () => {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return <Button loading colorScheme='teal'>Loading...</Button>;
+    return (
+      <Button loading colorScheme='teal'>
+        Loading...
+      </Button>
+    );
   }
 
   if (session) {
     return (
-      <Button colorScheme='red' onClick={ () => signOut() }>
-        Logout ({ session.user?.name })
+      <Button colorScheme='red' onClick={() => signOut()}>
+        Logout ({session.user?.name})
       </Button>
     );
   }
 
   return (
-    <Button colorScheme='teal' onClick={ () => signIn('google') }>
+    <Button colorScheme='teal' onClick={() => signIn('google')}>
       Login with Google
     </Button>
   );

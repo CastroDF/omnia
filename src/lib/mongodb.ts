@@ -1,7 +1,9 @@
 import { MongoClient } from 'mongodb';
 
 if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
-  throw new Error('Please add MONGODB_USERNAME and MONGODB_PASSWORD to .env.local');
+  throw new Error(
+    'Please add MONGODB_USERNAME and MONGODB_PASSWORD to .env.local',
+  );
 }
 
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@omnia-cluster.dnwcklu.mongodb.net/?retryWrites=true&w=majority&appName=omnia-cluster`;

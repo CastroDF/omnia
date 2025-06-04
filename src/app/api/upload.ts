@@ -1,5 +1,9 @@
 import { IncomingForm } from 'formidable';
-import { S3Client, PutObjectCommand, ObjectCannedACL } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  ObjectCannedACL,
+} from '@aws-sdk/client-s3';
 import fs from 'fs';
 import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
@@ -39,20 +43,28 @@ async function uploadToS3(file: any, folder: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
   try {
-    const form = new IncomingForm({ keepExtensions: true, maxFileSize: 10 * 1024 * 1024 }); // 10MB
+    const form = new IncomingForm({
+      keepExtensions: true,
+      maxFileSize: 10 * 1024 * 1024,
+    }); // 10MB
 
-    const data = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
-      form.parse(req as any, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
+    const data = await new Promise<{ fields: any; files: any }>(
+      (resolve, reject) => {
+        form.parse(req as any, (err, fields, files) => {
+          if (err) reject(err);
+          resolve({ fields, files });
+        });
+      },
+    );
 
     const objFile = data.files.obj?.[0];
     const mtlFile = data.files.mtl?.[0];
 
     if (!objFile || !mtlFile) {
-      return NextResponse.json({ error: 'Both .obj and .mtl files are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Both .obj and .mtl files are required' },
+        { status: 400 },
+      );
     }
 
     const folder = `uploads/${Date.now()}`;

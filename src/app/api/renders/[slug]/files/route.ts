@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ) {
   try {
     // Verificar autenticación
@@ -30,21 +30,38 @@ export async function POST(
     const glbFile = formData.get('glbFile') as File | null;
 
     if (!usdzFile && !glbFile) {
-      return NextResponse.json({ 
-        error: 'Se requiere al menos un archivo: USDZ o GLB' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Se requiere al menos un archivo: USDZ o GLB',
+        },
+        { status: 400 },
+      );
     }
 
     // Validar tipos de archivo
     const validUsdzTypes = ['model/vnd.usdz+zip', 'application/octet-stream'];
     const validGlbTypes = ['model/gltf-binary', 'application/octet-stream'];
 
-    if (usdzFile && !validUsdzTypes.includes(usdzFile.type) && !usdzFile.name.endsWith('.usdz')) {
-      return NextResponse.json({ error: 'El archivo USDZ debe tener extensión .usdz' }, { status: 400 });
+    if (
+      usdzFile &&
+      !validUsdzTypes.includes(usdzFile.type) &&
+      !usdzFile.name.endsWith('.usdz')
+    ) {
+      return NextResponse.json(
+        { error: 'El archivo USDZ debe tener extensión .usdz' },
+        { status: 400 },
+      );
     }
 
-    if (glbFile && !validGlbTypes.includes(glbFile.type) && !glbFile.name.endsWith('.glb')) {
-      return NextResponse.json({ error: 'El archivo GLB debe tener extensión .glb' }, { status: 400 });
+    if (
+      glbFile &&
+      !validGlbTypes.includes(glbFile.type) &&
+      !glbFile.name.endsWith('.glb')
+    ) {
+      return NextResponse.json(
+        { error: 'El archivo GLB debe tener extensión .glb' },
+        { status: 400 },
+      );
     }
 
     // Conectar a MongoDB y buscar el render
@@ -55,13 +72,16 @@ export async function POST(
     const render = await renders.findOne({
       slug,
       userId: session.user.id,
-      status: 'active'
+      status: 'active',
     });
 
     if (!render) {
-      return NextResponse.json({ 
-        error: 'Modelo no encontrado o no tienes permisos' 
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: 'Modelo no encontrado o no tienes permisos',
+        },
+        { status: 404 },
+      );
     }
 
     const uploadPromises = [];
@@ -71,14 +91,16 @@ export async function POST(
     if (usdzFile) {
       const usdzBuffer = Buffer.from(await usdzFile.arrayBuffer());
       const usdzKey = `renders/${slug}/${usdzFile.name}`;
-      
+
       uploadPromises.push(
-        s3Client.send(new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: usdzKey,
-          Body: usdzBuffer,
-          ContentType: 'model/vnd.usdz+zip',
-        }))
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: usdzKey,
+            Body: usdzBuffer,
+            ContentType: 'model/vnd.usdz+zip',
+          }),
+        ),
       );
 
       newFiles.usdz = {
@@ -92,14 +114,16 @@ export async function POST(
     if (glbFile) {
       const glbBuffer = Buffer.from(await glbFile.arrayBuffer());
       const glbKey = `renders/${slug}/${glbFile.name}`;
-      
+
       uploadPromises.push(
-        s3Client.send(new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: glbKey,
-          Body: glbBuffer,
-          ContentType: 'model/gltf-binary',
-        }))
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: glbKey,
+            Body: glbBuffer,
+            ContentType: 'model/gltf-binary',
+          }),
+        ),
       );
 
       newFiles.glb = {
@@ -115,21 +139,23 @@ export async function POST(
     // Actualizar el documento en MongoDB
     await renders.updateOne(
       { slug, userId: session.user.id },
-      { 
-        $set: { 
+      {
+        $set: {
           files: newFiles,
-          updatedAt: new Date()
-        }
-      }
+          updatedAt: new Date(),
+        },
+      },
     );
 
     return NextResponse.json({
       success: true,
       message: 'Archivos subidos exitosamente',
     });
-
   } catch (error) {
     console.error('Error uploading files:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 },
+    );
   }
-} 
+}

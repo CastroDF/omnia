@@ -7,8 +7,8 @@ export interface FileData {
 export interface RenderFiles {
   // Archivos principales para AR nativo
   usdz?: FileData; // Para iOS AR
-  glb?: FileData;  // Para Android AR
-  
+  glb?: FileData; // Para Android AR
+
   // Archivos legacy (para renders existentes)
   obj?: FileData;
   mtl?: FileData;
@@ -33,4 +33,4 @@ export interface UploadedRender {
   name: string;
   description?: string;
   publicUrl: string;
-} 
+}

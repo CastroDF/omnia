@@ -15,7 +15,7 @@ async function getRender(slug: string) {
     const renders = db.collection('renders');
 
     const render = await renders.findOne({ slug, status: 'active' });
-    
+
     if (!render) {
       return null;
     }
@@ -41,20 +41,22 @@ async function getRender(slug: string) {
 export async function generateMetadata({ params }: RenderPageProps) {
   const { slug } = await params;
   const render = await getRender(slug);
-  
+
   if (!render) {
     return {
-      title: 'Render no encontrado - Omnia'
+      title: 'Render no encontrado - Omnia',
     };
   }
 
   return {
     metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
     title: `${render.name} - Omnia AR`,
-    description: render.description || `Visualiza ${render.name} en realidad aumentada`,
+    description:
+      render.description || `Visualiza ${render.name} en realidad aumentada`,
     openGraph: {
       title: `${render.name} - Omnia AR`,
-      description: render.description || `Visualiza ${render.name} en realidad aumentada`,
+      description:
+        render.description || `Visualiza ${render.name} en realidad aumentada`,
       type: 'website',
       images: [
         {
@@ -68,7 +70,8 @@ export async function generateMetadata({ params }: RenderPageProps) {
     twitter: {
       card: 'summary_large_image',
       title: `${render.name} - Omnia AR`,
-      description: render.description || `Visualiza ${render.name} en realidad aumentada`,
+      description:
+        render.description || `Visualiza ${render.name} en realidad aumentada`,
     },
   };
 }

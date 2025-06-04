@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; fileType: string } }
+  { params }: { params: { slug: string; fileType: string } },
 ) {
   try {
     // Verificar autenticación
@@ -26,9 +26,12 @@ export async function DELETE(
 
     // Validar tipo de archivo
     if (fileType !== 'usdz' && fileType !== 'glb') {
-      return NextResponse.json({ 
-        error: 'Tipo de archivo no válido. Usa "usdz" o "glb"' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Tipo de archivo no válido. Usa "usdz" o "glb"',
+        },
+        { status: 400 },
+      );
     }
 
     // Conectar a MongoDB y buscar el render
@@ -39,29 +42,37 @@ export async function DELETE(
     const render = await renders.findOne({
       slug,
       userId: session.user.id,
-      status: 'active'
+      status: 'active',
     });
 
     if (!render) {
-      return NextResponse.json({ 
-        error: 'Modelo no encontrado o no tienes permisos' 
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: 'Modelo no encontrado o no tienes permisos',
+        },
+        { status: 404 },
+      );
     }
 
     // Verificar que el archivo existe
     const fileData = render.files[fileType];
     if (!fileData) {
-      return NextResponse.json({ 
-        error: `Archivo ${fileType.toUpperCase()} no encontrado` 
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: `Archivo ${fileType.toUpperCase()} no encontrado`,
+        },
+        { status: 404 },
+      );
     }
 
     // Eliminar archivo de S3
     try {
-      await s3Client.send(new DeleteObjectCommand({
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: fileData.key,
-      }));
+      await s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: fileData.key,
+        }),
+      );
     } catch (s3Error) {
       console.error('Error deleting from S3:', s3Error);
       // Continuar aunque haya error en S3 para limpiar la base de datos
@@ -70,22 +81,21 @@ export async function DELETE(
     // Actualizar el documento en MongoDB
     const updateQuery: any = {
       $unset: {},
-      $set: { updatedAt: new Date() }
+      $set: { updatedAt: new Date() },
     };
-    updateQuery.$unset[`files.${fileType}`] = "";
+    updateQuery.$unset[`files.${fileType}`] = '';
 
-    await renders.updateOne(
-      { slug, userId: session.user.id },
-      updateQuery
-    );
+    await renders.updateOne({ slug, userId: session.user.id }, updateQuery);
 
     return NextResponse.json({
       success: true,
       message: `Archivo ${fileType.toUpperCase()} eliminado exitosamente`,
     });
-
   } catch (error) {
     console.error('Error deleting file:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 },
+    );
   }
-} 
+}

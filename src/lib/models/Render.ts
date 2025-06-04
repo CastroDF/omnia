@@ -49,7 +49,7 @@ const RenderSchema = new Schema<IRender>(
   {
     collection: 'renders',
     timestamps: true, // Esto maneja automáticamente createdAt y updatedAt
-  }
+  },
 );
 
 export const Render =

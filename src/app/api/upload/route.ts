@@ -25,32 +25,52 @@ export async function POST(request: NextRequest) {
     // Parsear form data
     const formData = await request.formData();
     const name = formData.get('name') as string;
-    const description = formData.get('description') as string || '';
-    
+    const description = (formData.get('description') as string) || '';
+
     // Archivos principales para AR nativo
     const usdzFile = formData.get('usdzFile') as File | null;
     const glbFile = formData.get('glbFile') as File | null;
 
     if (!usdzFile && !glbFile) {
-      return NextResponse.json({ 
-        error: 'Se requiere al menos un archivo: USDZ (iOS) o GLB (Android)' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Se requiere al menos un archivo: USDZ (iOS) o GLB (Android)',
+        },
+        { status: 400 },
+      );
     }
 
     if (!name) {
-      return NextResponse.json({ error: 'Nombre es requerido' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Nombre es requerido' },
+        { status: 400 },
+      );
     }
 
     // Validar tipos de archivo
     const validUsdzTypes = ['model/vnd.usdz+zip', 'application/octet-stream'];
     const validGlbTypes = ['model/gltf-binary', 'application/octet-stream'];
 
-    if (usdzFile && !validUsdzTypes.includes(usdzFile.type) && !usdzFile.name.endsWith('.usdz')) {
-      return NextResponse.json({ error: 'El archivo USDZ debe tener extensión .usdz' }, { status: 400 });
+    if (
+      usdzFile &&
+      !validUsdzTypes.includes(usdzFile.type) &&
+      !usdzFile.name.endsWith('.usdz')
+    ) {
+      return NextResponse.json(
+        { error: 'El archivo USDZ debe tener extensión .usdz' },
+        { status: 400 },
+      );
     }
 
-    if (glbFile && !validGlbTypes.includes(glbFile.type) && !glbFile.name.endsWith('.glb')) {
-      return NextResponse.json({ error: 'El archivo GLB debe tener extensión .glb' }, { status: 400 });
+    if (
+      glbFile &&
+      !validGlbTypes.includes(glbFile.type) &&
+      !glbFile.name.endsWith('.glb')
+    ) {
+      return NextResponse.json(
+        { error: 'El archivo GLB debe tener extensión .glb' },
+        { status: 400 },
+      );
     }
 
     // Generar slug único
@@ -65,14 +85,16 @@ export async function POST(request: NextRequest) {
     if (usdzFile) {
       const usdzBuffer = Buffer.from(await usdzFile.arrayBuffer());
       const usdzKey = `renders/${slug}/${usdzFile.name}`;
-      
+
       uploadPromises.push(
-        s3Client.send(new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: usdzKey,
-          Body: usdzBuffer,
-          ContentType: 'model/vnd.usdz+zip',
-        }))
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: usdzKey,
+            Body: usdzBuffer,
+            ContentType: 'model/vnd.usdz+zip',
+          }),
+        ),
       );
 
       files.usdz = {
@@ -86,14 +108,16 @@ export async function POST(request: NextRequest) {
     if (glbFile) {
       const glbBuffer = Buffer.from(await glbFile.arrayBuffer());
       const glbKey = `renders/${slug}/${glbFile.name}`;
-      
+
       uploadPromises.push(
-        s3Client.send(new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: glbKey,
-          Body: glbBuffer,
-          ContentType: 'model/gltf-binary',
-        }))
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: glbKey,
+            Body: glbBuffer,
+            ContentType: 'model/gltf-binary',
+          }),
+        ),
       );
 
       files.glb = {
@@ -135,9 +159,11 @@ export async function POST(request: NextRequest) {
         publicUrl: `${process.env.NEXTAUTH_URL}/render/${slug}`,
       },
     });
-
   } catch (error) {
     console.error('Error uploading render:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 },
+    );
   }
-} 
+}

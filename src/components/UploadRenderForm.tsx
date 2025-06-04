@@ -30,9 +30,12 @@ export default function UploadRenderForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!usdzFile && !glbFile) {
-      setResult({ success: false, error: 'Se requiere al menos un archivo: USDZ (iOS) o GLB (Android)' });
+      setResult({
+        success: false,
+        error: 'Se requiere al menos un archivo: USDZ (iOS) o GLB (Android)',
+      });
       return;
     }
 
@@ -42,11 +45,11 @@ export default function UploadRenderForm() {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
-    
+
     if (usdzFile) {
       formData.append('usdzFile', usdzFile);
     }
-    
+
     if (glbFile) {
       formData.append('glbFile', glbFile);
     }
@@ -92,98 +95,129 @@ export default function UploadRenderForm() {
   };
 
   return (
-    <Card.Root maxW="2xl" mx="auto">
+    <Card.Root maxW='2xl' mx='auto'>
       <Card.Header>
-        <Heading size="lg">Subir Modelo AR</Heading>
-        <Text color="gray.600" mt={2}>
+        <Heading size='lg'>Subir Modelo AR</Heading>
+        <Text color='gray.600' mt={2}>
           Crea experiencias de Realidad Aumentada nativas para iOS y Android
         </Text>
       </Card.Header>
-      
+
       <Card.Body>
-        <Box as="form" onSubmit={handleSubmit}>
+        <Box as='form' onSubmit={handleSubmit}>
           <VStack gap={6}>
             {/* Información básica */}
-            <Box w="full">
-              <Text fontWeight="bold" mb={2}>Nombre del modelo *</Text>
+            <Box w='full'>
+              <Text fontWeight='bold' mb={2}>
+                Nombre del modelo *
+              </Text>
               <Input
-                type="text"
+                type='text'
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ej: Audi R8 2024"
+                onChange={e => setName(e.target.value)}
+                placeholder='Ej: Audi R8 2024'
               />
             </Box>
 
-            <Box w="full">
-              <Text fontWeight="bold" mb={2}>Descripción</Text>
+            <Box w='full'>
+              <Text fontWeight='bold' mb={2}>
+                Descripción
+              </Text>
               <Input
-                type="text"
+                type='text'
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe tu modelo 3D..."
+                onChange={e => setDescription(e.target.value)}
+                placeholder='Describe tu modelo 3D...'
               />
             </Box>
 
             {/* Separador */}
-            <Box w="full" h="1px" bg="gray.200" />
+            <Box w='full' h='1px' bg='gray.200' />
 
             {/* Archivos AR */}
-            <Box w="full">
-              <Heading size="md" mb={3}>
+            <Box w='full'>
+              <Heading size='md' mb={3}>
                 🥽 Archivos AR (al menos uno requerido)
               </Heading>
-              
-              <Box p={4} bg="blue.50" borderRadius="md" mb={4}>
-                <Text fontWeight="bold" color="blue.800">Compatibilidad por plataforma:</Text>
-                <VStack align="start" mt={2} gap={1}>
-                  <Text fontSize="sm" color="blue.700">
-                    📱 <strong>iOS:</strong> Requiere archivo .usdz (Quick Look AR)
+
+              <Box p={4} bg='blue.50' borderRadius='md' mb={4}>
+                <Text fontWeight='bold' color='blue.800'>
+                  Compatibilidad por plataforma:
+                </Text>
+                <VStack align='start' mt={2} gap={1}>
+                  <Text fontSize='sm' color='blue.700'>
+                    📱 <strong>iOS:</strong> Requiere archivo .usdz (Quick Look
+                    AR)
                   </Text>
-                  <Text fontSize="sm" color="blue.700">
-                    🤖 <strong>Android:</strong> Requiere archivo .glb (Scene Viewer AR)
+                  <Text fontSize='sm' color='blue.700'>
+                    🤖 <strong>Android:</strong> Requiere archivo .glb (Scene
+                    Viewer AR)
                   </Text>
-                  <Text fontSize="sm" color="green.700">
-                    ✅ <strong>Tip:</strong> Sube ambos para máxima compatibilidad
+                  <Text fontSize='sm' color='green.700'>
+                    ✅ <strong>Tip:</strong> Sube ambos para máxima
+                    compatibilidad
                   </Text>
                 </VStack>
               </Box>
 
               <VStack gap={4}>
-                <Box w="full">
-                  <Text fontWeight="bold" mb={2}>
-                    Archivo USDZ <Box as="span" bg="blue.100" color="blue.800" px={2} py={1} borderRadius="md" fontSize="xs">iOS AR</Box>
+                <Box w='full'>
+                  <Text fontWeight='bold' mb={2}>
+                    Archivo USDZ{' '}
+                    <Box
+                      as='span'
+                      bg='blue.100'
+                      color='blue.800'
+                      px={2}
+                      py={1}
+                      borderRadius='md'
+                      fontSize='xs'
+                    >
+                      iOS AR
+                    </Box>
                   </Text>
                   <Input
-                    type="file"
-                    accept=".usdz"
-                    onChange={(e) => setUsdzFile(e.target.files?.[0] || null)}
+                    type='file'
+                    accept='.usdz'
+                    onChange={e => setUsdzFile(e.target.files?.[0] || null)}
                     pt={1}
                   />
-                  <Text fontSize="sm" color="gray.600" mt={1}>
+                  <Text fontSize='sm' color='gray.600' mt={1}>
                     Para AR nativo en iPhone/iPad usando Quick Look
                   </Text>
                   {usdzFile && (
-                    <Text fontSize="xs" color="green.600" mt={1}>
+                    <Text fontSize='xs' color='green.600' mt={1}>
                       ✅ Archivo seleccionado: {usdzFile.name}
                     </Text>
                   )}
                 </Box>
 
-                <Box w="full">
-                  <Text fontWeight="bold" mb={2}>
-                    Archivo GLB <Box as="span" bg="green.100" color="green.800" px={2} py={1} borderRadius="md" fontSize="xs">Android AR</Box>
+                <Box w='full'>
+                  <Text fontWeight='bold' mb={2}>
+                    Archivo GLB{' '}
+                    <Box
+                      as='span'
+                      bg='green.100'
+                      color='green.800'
+                      px={2}
+                      py={1}
+                      borderRadius='md'
+                      fontSize='xs'
+                    >
+                      Android AR
+                    </Box>
                   </Text>
                   <Input
-                    type="file"
-                    accept=".glb"
-                    onChange={(e) => setGlbFile(e.target.files?.[0] || null)}
+                    type='file'
+                    accept='.glb'
+                    onChange={e => setGlbFile(e.target.files?.[0] || null)}
                     pt={1}
                   />
-                  <Text fontSize="sm" color="gray.600" mt={1}>
+                  <Text fontSize='sm' color='gray.600' mt={1}>
                     Para AR nativo en Android usando Scene Viewer
                   </Text>
                   {glbFile && (
-                    <Text fontSize="xs" color="green.600" mt={1}>
+                    <Text fontSize='xs' color='green.600' mt={1}>
                       ✅ Archivo seleccionado: {glbFile.name}
                     </Text>
                   )}
@@ -193,15 +227,15 @@ export default function UploadRenderForm() {
 
             {/* Progreso de upload */}
             {isUploading && (
-              <Box w="full">
+              <Box w='full'>
                 <Text mb={2}>Subiendo archivos...</Text>
-                <Box w="full" bg="gray.200" borderRadius="md" h="2">
-                  <Box 
-                    bg="teal.500" 
-                    h="full" 
-                    borderRadius="md"
+                <Box w='full' bg='gray.200' borderRadius='md' h='2'>
+                  <Box
+                    bg='teal.500'
+                    h='full'
+                    borderRadius='md'
                     w={`${uploadProgress}%`}
-                    transition="width 0.3s ease"
+                    transition='width 0.3s ease'
                   />
                 </Box>
               </Box>
@@ -209,51 +243,54 @@ export default function UploadRenderForm() {
 
             {/* Resultado */}
             {result && (
-              <Box 
-                w="full" 
-                p={4} 
-                bg={result.success ? "green.50" : "red.50"} 
-                borderColor={result.success ? "green.200" : "red.200"} 
-                borderWidth={1} 
-                borderRadius="md"
+              <Box
+                w='full'
+                p={4}
+                bg={result.success ? 'green.50' : 'red.50'}
+                borderColor={result.success ? 'green.200' : 'red.200'}
+                borderWidth={1}
+                borderRadius='md'
               >
                 {result.success ? (
                   <Box>
-                    <Text fontWeight="bold" color="green.800">¡Modelo AR subido exitosamente!</Text>
-                    <Text mt={2} color="green.700">
+                    <Text fontWeight='bold' color='green.800'>
+                      ¡Modelo AR subido exitosamente!
+                    </Text>
+                    <Text mt={2} color='green.700'>
                       <strong>Enlace público:</strong>{' '}
-                      <Text as="span" color="teal.600" fontFamily="mono">
+                      <Text as='span' color='teal.600' fontFamily='mono'>
                         /render/{result.slug}
                       </Text>
                     </Text>
                     {description && (
-                      <Text mt={1} fontSize="sm" color="gray.600">
+                      <Text mt={1} fontSize='sm' color='gray.600'>
                         {description}
                       </Text>
                     )}
-                    <Text mt={2} fontSize="sm" color="green.600">
-                      💡 Comparte este enlace en Instagram Stories para AR nativo
+                    <Text mt={2} fontSize='sm' color='green.600'>
+                      💡 Comparte este enlace en Instagram Stories para AR
+                      nativo
                     </Text>
                   </Box>
                 ) : (
-                  <Text color="red.800">{result.error}</Text>
+                  <Text color='red.800'>{result.error}</Text>
                 )}
               </Box>
             )}
 
             {/* Botón de envío */}
             <Button
-              type="submit"
-              colorScheme="teal"
-              size="lg"
+              type='submit'
+              colorScheme='teal'
+              size='lg'
               loading={isUploading}
               disabled={(!usdzFile && !glbFile) || !name || isUploading}
-              w="full"
+              w='full'
             >
               {isUploading ? 'Subiendo...' : 'Subir Modelo AR'}
             </Button>
 
-            <Text fontSize="sm" color="gray.500" textAlign="center">
+            <Text fontSize='sm' color='gray.500' textAlign='center'>
               * Se requiere al menos un archivo (USDZ o GLB)
             </Text>
           </VStack>

@@ -5,7 +5,7 @@ import UploadRenderForm from '@/components/UploadRenderForm';
 
 export default function UploadPage() {
   return (
-    <Container maxW="2xl" py={10}>
+    <Container maxW='2xl' py={10}>
       <UploadRenderForm />
     </Container>
   );

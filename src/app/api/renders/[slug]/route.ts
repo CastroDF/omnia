@@ -4,7 +4,7 @@ import clientPromise from '@/lib/mongodb';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ) {
   try {
     // Verificar autenticación
@@ -24,13 +24,16 @@ export async function GET(
     const render = await renders.findOne({
       slug,
       userId: session.user.id,
-      status: 'active'
+      status: 'active',
     });
 
     if (!render) {
-      return NextResponse.json({ 
-        error: 'Modelo no encontrado o no tienes permisos para verlo' 
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: 'Modelo no encontrado o no tienes permisos para verlo',
+        },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({
@@ -40,9 +43,11 @@ export async function GET(
         _id: render._id.toString(),
       },
     });
-
   } catch (error) {
     console.error('Error getting render:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 },
+    );
   }
-} 
+}
