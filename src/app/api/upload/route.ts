@@ -16,13 +16,13 @@ const s3Client = new S3Client({
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticación
+    // Check authentication
     const session = await getSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Parsear form data
+    // Parse form data
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const description = (formData.get('description') as string) || '';
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar tipos de archivo
+    // Validate file types
     const validUsdzTypes = ['model/vnd.usdz+zip', 'application/octet-stream'];
     const validGlbTypes = ['model/gltf-binary', 'application/octet-stream'];
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generar slug único
+    // Generate unique slug
     const timestamp = Date.now();
     const baseSlug = slugify(name, { lower: true, strict: true });
     const slug = `${baseSlug}-${timestamp}`;
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const uploadPromises = [];
     const files: any = {};
 
-    // Subir archivo USDZ si existe (para iOS AR)
+    // Upload USDZ file for iOS AR
     if (usdzFile) {
       const usdzBuffer = Buffer.from(await usdzFile.arrayBuffer());
       const usdzKey = `renders/${slug}/${usdzFile.name}`;
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Subir archivo GLB si existe (para Android AR)
+    // Upload GLB file for Android AR
     if (glbFile) {
       const glbBuffer = Buffer.from(await glbFile.arrayBuffer());
       const glbKey = `renders/${slug}/${glbFile.name}`;
@@ -127,10 +127,10 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Subir todos los archivos a S3
+    // Upload all files to S3
     await Promise.all(uploadPromises);
 
-    // Guardar en MongoDB
+    // Save to MongoDB
     const client = await clientPromise;
     const db = client.db('omnia');
     const renders = db.collection('renders');

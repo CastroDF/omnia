@@ -13,14 +13,14 @@ let client;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === 'development') {
-  // En dev, usamos una variable global para cache
+  // In development, use a global variable to cache the client
   if (!(global as any)._mongoClientPromise) {
     client = new MongoClient(uri, options);
     (global as any)._mongoClientPromise = client.connect();
   }
   clientPromise = (global as any)._mongoClientPromise;
 } else {
-  // En prod, siempre nuevo
+  // In production, always create a new client
   client = new MongoClient(uri, options);
   clientPromise = client.connect();
 }

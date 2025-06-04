@@ -55,7 +55,6 @@ export default function UploadRenderForm() {
     }
 
     try {
-      // Simular progreso de upload
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
@@ -78,7 +77,6 @@ export default function UploadRenderForm() {
 
       if (response.ok) {
         setResult({ success: true, slug: data.slug });
-        // Limpiar formulario
         setName('');
         setDescription('');
         setUsdzFile(null);

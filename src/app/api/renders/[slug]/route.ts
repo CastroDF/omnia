@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { slug: string } },
 ) {
   try {
-    // Verificar autenticación
+    // Check authentication
     const session = await getSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -15,12 +15,12 @@ export async function GET(
 
     const { slug } = await params;
 
-    // Conectar a MongoDB
+    // Connect to MongoDB
     const client = await clientPromise;
     const db = client.db('omnia');
     const renders = db.collection('renders');
 
-    // Buscar el render por slug y que pertenezca al usuario
+    // Find render by slug for user
     const render = await renders.findOne({
       slug,
       userId: session.user.id,

@@ -13,20 +13,20 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {
-      // Comillas simples
+      // Single quotes
       quotes: [
         'error',
         'single',
         { avoidEscape: true, allowTemplateLiterals: true },
       ],
 
-      // Punto y coma obligatorio
+      // Semicolons
       semi: ['error', 'always'],
 
-      // Indentado de 2 espacios
+      // 2 spaces indent
       indent: ['error', 2, { SwitchCase: 1 }],
 
-      // Configuraciones adicionales para mantener consistencia
+      // Additional configurations to maintain consistency
       'jsx-quotes': ['error', 'prefer-single'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
@@ -37,7 +37,7 @@ const eslintConfig = [
       'eol-last': ['error', 'always'],
       'no-trailing-spaces': 'error',
 
-      // Hacer que estas reglas sean warnings en lugar de errores
+      // Make these rules warnings instead of errors
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',

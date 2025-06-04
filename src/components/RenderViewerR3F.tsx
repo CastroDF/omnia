@@ -29,10 +29,10 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
     const detectDevice = () => {
       const userAgent = navigator.userAgent;
 
-      // Detectar iOS
+      // Detect iOS
       if (/iPad|iPhone|iPod/.test(userAgent)) {
         setDeviceType('ios');
-        // AR disponible si hay archivo .usdz
+        // AR available if .usdz file exists
         if (render.files.usdz) {
           setARCapability('available');
         } else {
@@ -41,10 +41,10 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
         return;
       }
 
-      // Detectar Android
+      // Detect Android
       if (/Android/.test(userAgent)) {
         setDeviceType('android');
-        // AR disponible si hay archivo .glb
+        // AR available if .glb file exists
         if (render.files.glb) {
           setARCapability('available');
         } else {
@@ -53,7 +53,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
         return;
       }
 
-      // Desktop o otros
+      // Desktop or other devices
       setDeviceType('desktop');
       setARCapability('not-supported');
     };
@@ -107,9 +107,9 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
       return;
     }
 
-    // AR disponible - crear enlaces nativos
+    // AR available - create native links
     if (deviceType === 'ios' && render.files.usdz) {
-      // iOS: usar Quick Look con rel="ar"
+      // iOS: use Quick Look with rel="ar"
       const link = document.createElement('a');
       link.href = render.files.usdz.url;
       link.rel = 'ar';
@@ -118,7 +118,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
       link.click();
       document.body.removeChild(link);
     } else if (deviceType === 'android' && render.files.glb) {
-      // Android: usar Scene Viewer con intent://
+      // Android: use Scene Viewer with intent://
       const fallbackUrl = encodeURIComponent(window.location.href);
       const modelUrl = encodeURIComponent(render.files.glb.url);
 

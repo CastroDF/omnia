@@ -92,7 +92,6 @@ export default function EditRenderPage() {
       setUsdzFile(null);
       setGlbFile(null);
 
-      // Recargar datos del render
       await fetchRender();
     } catch (error) {
       console.error('Error:', error);
@@ -130,7 +129,6 @@ export default function EditRenderPage() {
 
       setSuccess(`Archivo ${fileType.toUpperCase()} eliminado exitosamente`);
 
-      // Recargar datos del render
       await fetchRender();
     } catch (error) {
       console.error('Error:', error);

@@ -232,7 +232,6 @@ export default function RendersPage() {
                             navigator.clipboard.writeText(
                               `${window.location.origin}/render/${render.slug}`,
                             );
-                            // TODO: Agregar toast de confirmación
                           }}
                         >
                           Copiar Link

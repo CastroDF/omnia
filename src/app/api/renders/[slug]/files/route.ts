@@ -16,7 +16,7 @@ export async function POST(
   { params }: { params: { slug: string } },
 ) {
   try {
-    // Verificar autenticación
+    // Check authentication
     const session = await getSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -24,7 +24,7 @@ export async function POST(
 
     const { slug } = await params;
 
-    // Parsear form data
+    // Parse form data
     const formData = await request.formData();
     const usdzFile = formData.get('usdzFile') as File | null;
     const glbFile = formData.get('glbFile') as File | null;
@@ -38,7 +38,7 @@ export async function POST(
       );
     }
 
-    // Validar tipos de archivo
+    // Validate file types
     const validUsdzTypes = ['model/vnd.usdz+zip', 'application/octet-stream'];
     const validGlbTypes = ['model/gltf-binary', 'application/octet-stream'];
 
@@ -64,7 +64,7 @@ export async function POST(
       );
     }
 
-    // Conectar a MongoDB y buscar el render
+    // Connect to MongoDB and find render
     const client = await clientPromise;
     const db = client.db('omnia');
     const renders = db.collection('renders');
@@ -87,7 +87,7 @@ export async function POST(
     const uploadPromises = [];
     const newFiles: any = { ...render.files };
 
-    // Subir archivo USDZ si existe
+    // Upload USDZ file if exists
     if (usdzFile) {
       const usdzBuffer = Buffer.from(await usdzFile.arrayBuffer());
       const usdzKey = `renders/${slug}/${usdzFile.name}`;
@@ -110,7 +110,7 @@ export async function POST(
       };
     }
 
-    // Subir archivo GLB si existe
+    // Upload GLB file if exists
     if (glbFile) {
       const glbBuffer = Buffer.from(await glbFile.arrayBuffer());
       const glbKey = `renders/${slug}/${glbFile.name}`;
@@ -133,10 +133,10 @@ export async function POST(
       };
     }
 
-    // Subir todos los archivos a S3
+    // Upload all files to S3
     await Promise.all(uploadPromises);
 
-    // Actualizar el documento en MongoDB
+    // Update document in MongoDB
     await renders.updateOne(
       { slug, userId: session.user.id },
       {

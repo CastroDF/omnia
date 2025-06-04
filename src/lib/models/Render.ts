@@ -48,7 +48,7 @@ const RenderSchema = new Schema<IRender>(
   },
   {
     collection: 'renders',
-    timestamps: true, // Esto maneja automáticamente createdAt y updatedAt
+    timestamps: true, // Automatically handles createdAt and updatedAt
   },
 );
 

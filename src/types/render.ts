@@ -5,11 +5,11 @@ export interface FileData {
 }
 
 export interface RenderFiles {
-  // Archivos principales para AR nativo
-  usdz?: FileData; // Para iOS AR
-  glb?: FileData; // Para Android AR
+  // Main files for native AR
+  usdz?: FileData; // For iOS AR
+  glb?: FileData; // For Android AR
 
-  // Archivos legacy (para renders existentes)
+  // Legacy files (for existing renders)
   obj?: FileData;
   mtl?: FileData;
 }

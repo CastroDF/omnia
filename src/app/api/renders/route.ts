@@ -4,18 +4,18 @@ import clientPromise from '@/lib/mongodb';
 
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticación
+    // Check authentication
     const session = await getSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Conectar a MongoDB
+    // Connect to MongoDB
     const client = await clientPromise;
     const db = client.db('omnia');
     const renders = db.collection('renders');
 
-    // Obtener renders del usuario
+    // Get user renders
     const userRenders = await renders
       .find({ userId: session.user.id })
       .sort({ createdAt: -1 })

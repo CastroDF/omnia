@@ -16,7 +16,7 @@ export async function DELETE(
   { params }: { params: { slug: string; fileType: string } },
 ) {
   try {
-    // Verificar autenticación
+    // Check authentication
     const session = await getSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -24,7 +24,7 @@ export async function DELETE(
 
     const { slug, fileType } = await params;
 
-    // Validar tipo de archivo
+    // Validate file type
     if (fileType !== 'usdz' && fileType !== 'glb') {
       return NextResponse.json(
         {
@@ -34,7 +34,7 @@ export async function DELETE(
       );
     }
 
-    // Conectar a MongoDB y buscar el render
+    // Connect to MongoDB and find render
     const client = await clientPromise;
     const db = client.db('omnia');
     const renders = db.collection('renders');
@@ -54,7 +54,7 @@ export async function DELETE(
       );
     }
 
-    // Verificar que el archivo existe
+    // Check if file exists
     const fileData = render.files[fileType];
     if (!fileData) {
       return NextResponse.json(
@@ -65,7 +65,7 @@ export async function DELETE(
       );
     }
 
-    // Eliminar archivo de S3
+    // Delete file from S3
     try {
       await s3Client.send(
         new DeleteObjectCommand({
@@ -75,10 +75,9 @@ export async function DELETE(
       );
     } catch (s3Error) {
       console.error('Error deleting from S3:', s3Error);
-      // Continuar aunque haya error en S3 para limpiar la base de datos
     }
 
-    // Actualizar el documento en MongoDB
+    // Update document in MongoDB
     const updateQuery: any = {
       $unset: {},
       $set: { updatedAt: new Date() },
