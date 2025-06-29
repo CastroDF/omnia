@@ -3,11 +3,16 @@ import { describe, it, expect, vi } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Mock next-auth/middleware properly
-const mockWithAuth = vi.fn((_middleware: unknown, _options?: unknown) => {
-  return vi.fn((_req: NextRequest) => {
-    return NextResponse.next();
-  });
-});
+const mockWithAuth = vi.fn(
+  (
+    _middleware: (req: NextRequest) => NextResponse | Promise<NextResponse>,
+    _options?: { pages?: { signIn?: string } },
+  ) => {
+    return vi.fn((_req: NextRequest) => {
+      return NextResponse.next();
+    });
+  },
+);
 
 vi.mock('next-auth/middleware', () => ({
   default: mockWithAuth,

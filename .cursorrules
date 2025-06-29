@@ -1,0 +1,135 @@
+# Cursor Rules for Omnia Project
+
+## Code Quality & TypeScript
+- **NEVER use `any` type** - Always use specific types or interfaces
+- **NEVER use `unknown` type** - Define precise types instead
+- **NEVER use `/* eslint-disable */`** - Fix the root cause of linting issues
+- **Always define explicit interfaces** for complex objects
+- **Use type-safe patterns** throughout the codebase
+- **Prefer type assertions with specific types** over generic casting
+
+## Formatting & Style
+- **Always use spaces instead of tabs** for indentation (2 spaces)
+- **All comments must be in English**
+- **Use arrow functions instead of function declarations** for components
+- **Maintain consistent naming conventions**: camelCase for variables/functions, PascalCase for components/types
+
+## Code Preservation
+- **Avoid deleting existing comments** unless absolutely necessary
+- **Don't remove unnecessary things** unless they cause issues
+- **Preserve existing functionality** when refactoring
+- **Maintain existing code structure** unless improving it significantly
+
+## Testing & Mocks
+- **Use specific types for test mocks** instead of generic ones
+- **Define interfaces for mock objects** to ensure type safety
+- **Avoid complex mocks** - simplify when possible while maintaining functionality
+- **Keep test setup clean** with proper type definitions
+
+## Error Handling
+- **Handle errors with specific Error types** rather than generic catch-all
+- **Use proper error boundaries** in React components
+- **Provide meaningful error messages** for debugging
+
+## React & Next.js Best Practices
+- **Use React hooks properly** with correct dependency arrays
+- **Implement proper loading states** for async operations  
+- **Use Next.js conventions** for routing and API routes
+- **Optimize performance** with proper memoization when needed
+
+## Import & Export
+- **Use consistent import ordering**: external libraries first, then internal modules
+- **Prefer named exports** over default exports when multiple exports exist
+- **Use absolute imports** with `@/` prefix for internal modules
+
+## Database & API
+- **Use proper TypeScript interfaces** for database models
+- **Implement input validation** for API endpoints
+- **Handle async operations** with proper error handling
+- **Use environment variables** for configuration
+
+## Documentation
+- **Write clear JSDoc comments** for complex functions
+- **Document component props** with TypeScript interfaces
+- **Explain complex business logic** with inline comments
+- **Keep README files updated** with current project state
+
+## Performance
+- **Avoid unnecessary re-renders** in React components
+- **Use proper React.memo** when components have expensive renders
+- **Implement efficient database queries** with proper indexing
+- **Optimize bundle size** by avoiding unnecessary imports
+
+## Security
+- **Validate all user inputs** before processing
+- **Use proper authentication** for protected routes
+- **Sanitize data** before database operations
+- **Follow OWASP security guidelines**
+
+## Code Examples
+
+### ✅ Good - Specific Types
+```typescript
+interface UserData {
+  id: string;
+  email: string;
+  name: string;
+}
+
+const processUser = (userData: UserData): Promise<ProcessedUser> => {
+  // Implementation
+};
+```
+
+### ❌ Bad - Generic Types
+```typescript
+const processUser = (userData: any): Promise<any> => {
+  // Implementation
+};
+```
+
+### ✅ Good - Arrow Functions
+```typescript
+const UserComponent = ({ id, name }: UserProps) => {
+  return <div>{name}</div>;
+};
+```
+
+### ❌ Bad - Function Declarations
+```typescript
+function UserComponent({ id, name }: UserProps) {
+  return <div>{name}</div>;
+}
+```
+
+### ✅ Good - Specific Mock Types
+```typescript
+interface MockUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+const mockUser: MockUser = {
+  id: 'test-id',
+  email: 'test@example.com',
+  name: 'Test User'
+};
+```
+
+### ❌ Bad - Generic Mock Types
+```typescript
+const mockUser: any = {
+  id: 'test-id',
+  email: 'test@example.com',
+  name: 'Test User'
+};
+```
+
+## Enforcement
+- **Run ESLint before commits** and fix all warnings
+- **Use TypeScript strict mode** to catch type issues early
+- **Review code for adherence** to these rules during development
+- **Prioritize code quality** over speed of development
+
+These rules ensure maintainable, type-safe, and high-quality code throughout the Omnia project. 
