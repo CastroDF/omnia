@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi } from 'vitest';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Mock next-auth/middleware properly
-const mockWithAuth = vi.fn((middleware: any, options?: any) => {
-  return vi.fn((req: any) => {
-    return new Response('OK', { status: 200 });
+const mockWithAuth = vi.fn((_middleware: unknown, _options?: unknown) => {
+  return vi.fn((_req: NextRequest) => {
+    return NextResponse.next();
   });
 });
 
@@ -38,8 +39,8 @@ describe('Middleware', () => {
     // Create a mock request
     const req = new NextRequest('http://localhost:3000/dashboard');
 
-    // Call the middleware
-    const response = middlewareModule.default(req, {} as any);
+    // Call the middleware (skip type check for testing)
+    const response = middlewareModule.default(req as never, {} as never);
 
     expect(response).toBeDefined();
     expect(mockWithAuth).toHaveBeenCalled();

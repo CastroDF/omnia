@@ -1,4 +1,9 @@
-import { IncomingForm } from 'formidable';
+import {
+  IncomingForm,
+  File as FormidableFile,
+  Fields,
+  Files,
+} from 'formidable';
 import {
   S3Client,
   PutObjectCommand,
@@ -23,16 +28,19 @@ const s3 = new S3Client({
   },
 });
 
-async function uploadToS3(file: any, folder: string): Promise<string> {
+async function uploadToS3(
+  file: FormidableFile,
+  folder: string,
+): Promise<string> {
   const fileStream = fs.createReadStream(file.filepath);
-  const ext = path.extname(file.originalFilename);
+  const ext = path.extname(file.originalFilename || '');
   const key = `${folder}/${randomUUID()}${ext}`;
 
   const uploadParams = {
     Bucket: process.env.S3_BUCKET_NAME!,
     Key: key,
     Body: fileStream,
-    ContentType: file.mimetype,
+    ContentType: file.mimetype || 'application/octet-stream',
     ACL: ObjectCannedACL.public_read,
   };
 
@@ -48,17 +56,24 @@ export async function POST(req: NextRequest) {
       maxFileSize: 10 * 1024 * 1024,
     }); // 10MB
 
-    const data = await new Promise<{ fields: any; files: any }>(
+    const data = await new Promise<{ fields: Fields; files: Files }>(
       (resolve, reject) => {
-        form.parse(req as any, (err, fields, files) => {
-          if (err) reject(err);
-          resolve({ fields, files });
-        });
+        form.parse(
+          req as unknown as Parameters<typeof form.parse>[0],
+          (err, fields, files) => {
+            if (err) reject(err);
+            resolve({ fields, files });
+          },
+        );
       },
     );
 
-    const objFile = data.files.obj?.[0];
-    const mtlFile = data.files.mtl?.[0];
+    const objFile = Array.isArray(data.files.obj)
+      ? data.files.obj[0]
+      : data.files.obj;
+    const mtlFile = Array.isArray(data.files.mtl)
+      ? data.files.mtl[0]
+      : data.files.mtl;
 
     if (!objFile || !mtlFile) {
       return NextResponse.json(

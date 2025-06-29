@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import '@testing-library/jest-dom/vitest';
 import { JSDOM } from 'jsdom';
 import ResizeObserver from 'resize-observer-polyfill';
 import { vi } from 'vitest';
+import { TextEncoder, TextDecoder } from 'util';
 
 const { window } = new JSDOM();
 
@@ -80,8 +82,8 @@ vi.mock('next-auth/react', () => ({
 
 // Mock next-auth middleware
 vi.mock('next-auth/middleware', () => {
-  const mockWithAuth = vi.fn((middleware: any, options?: any) => {
-    return vi.fn((req: any) => {
+  const mockWithAuth = vi.fn((_middleware: unknown, _options?: unknown) => {
+    return vi.fn((_req: unknown) => {
       return new Response('OK', { status: 200 });
     });
   });
@@ -116,7 +118,7 @@ const mockModel = vi.fn().mockImplementation(() => ({
 // Create MockSchema class with proper Types
 const MockSchema = class MockSchema {
   static Types = mockTypes;
-  constructor(schema: any, options?: any) {
+  constructor(_schema: unknown, _options?: unknown) {
     // Constructor implementation
   }
 };
@@ -187,7 +189,7 @@ vi.mock('@aws-sdk/client-s3', () => ({
 
 // Mock slugify
 vi.mock('slugify', () => ({
-  default: vi.fn((str: string, options?: any) => {
+  default: vi.fn((str: string, _options?: unknown) => {
     return str
       .toLowerCase()
       .replace(/\s+/g, '-')
@@ -245,14 +247,14 @@ global.File = class File {
   slice(): Blob {
     return new Blob();
   }
-} as any;
+} as unknown as typeof File;
 
 // Mock FormData with proper multipart support
 global.FormData = class FormData {
-  private data: Map<string, any> = new Map();
+  private data: Map<string, unknown> = new Map();
   private _boundary: string = '----formdata-test-boundary';
 
-  append(name: string, value: any, filename?: string): void {
+  append(name: string, value: unknown, _filename?: string): void {
     if (value instanceof File) {
       this.data.set(name, value);
     } else {
@@ -260,11 +262,11 @@ global.FormData = class FormData {
     }
   }
 
-  get(name: string): any {
+  get(name: string): unknown {
     return this.data.get(name) || null;
   }
 
-  getAll(name: string): any[] {
+  getAll(name: string): unknown[] {
     const value = this.data.get(name);
     return value ? [value] : [];
   }
@@ -277,70 +279,85 @@ global.FormData = class FormData {
     this.data.delete(name);
   }
 
-  entries(): IterableIterator<[string, any]> {
-    return this.data.entries();
+  set(name: string, value: unknown): void {
+    this.data.set(name, value);
   }
 
   keys(): IterableIterator<string> {
     return this.data.keys();
   }
 
-  values(): IterableIterator<any> {
+  values(): IterableIterator<unknown> {
     return this.data.values();
   }
 
-  forEach(callback: (value: any, key: string) => void): void {
+  forEach(callback: (value: unknown, key: string) => void): void {
     this.data.forEach(callback);
   }
 
-  [Symbol.iterator]() {
+  entries(): IterableIterator<[string, unknown]> {
     return this.data.entries();
   }
 
-  // Add toString method for debugging
+  [Symbol.iterator](): IterableIterator<[string, unknown]> {
+    return this.data.entries();
+  }
+
   toString(): string {
     return '[object FormData]';
   }
-} as any;
+} as unknown as typeof FormData;
 
 // Mock Request for Next.js API routes
 global.Request = class Request {
   url: string;
   method: string;
   headers: Map<string, string>;
-  body: any;
+  body: unknown;
 
   constructor(input: string | Request, init?: RequestInit) {
     this.url = typeof input === 'string' ? input : input.url;
     this.method = init?.method || 'GET';
     this.headers = new Map();
-    this.body = init?.body;
+    this.body = init?.body || null;
 
-    // Set content-type for FormData
-    if (init?.body instanceof FormData) {
-      this.headers.set('content-type', 'multipart/form-data');
+    if (init?.headers) {
+      Object.entries(init.headers as Record<string, string>).forEach(
+        ([key, value]) => {
+          this.headers.set(key, value);
+        },
+      );
     }
   }
 
   async formData(): Promise<FormData> {
-    if (this.body instanceof FormData) {
-      return this.body;
-    }
-    // Return empty FormData if no body
     return new FormData();
   }
 
-  async json(): Promise<any> {
-    if (typeof this.body === 'string') {
-      return JSON.parse(this.body);
-    }
-    return this.body;
+  async arrayBuffer(): Promise<ArrayBuffer> {
+    return new ArrayBuffer(0);
+  }
+
+  async json(): Promise<unknown> {
+    return {};
+  }
+
+  async blob(): Promise<Blob> {
+    return new Blob();
   }
 
   async text(): Promise<string> {
-    return String(this.body || '');
+    return '';
   }
-} as any;
+
+  clone(): Request {
+    return new Request(this.url, {
+      method: this.method,
+      headers: Object.fromEntries(this.headers),
+      body: this.body as BodyInit,
+    });
+  }
+} as unknown as typeof Request;
 
 // Mock fetch for API tests
 global.fetch = vi.fn();
@@ -359,48 +376,57 @@ process.env.NEXTAUTH_URL = 'http://localhost:3000';
 
 // Mock formidable for API testing with proper FormData support
 vi.mock('formidable', () => ({
-  default: vi.fn().mockImplementation((options?: any) => ({
-    parse: vi.fn((req: any, callback: any) => {
-      // Simulate proper form parsing with fields and files
-      const fields: Record<string, any> = {};
-      const files: Record<string, any> = {};
+  default: vi.fn().mockImplementation((_options?: Record<string, unknown>) => ({
+    parse: vi.fn(
+      (
+        req: unknown,
+        callback: (
+          err: Error | null,
+          fields: Record<string, unknown>,
+          files: Record<string, unknown>,
+        ) => void,
+      ) => {
+        // Simulate proper form parsing with fields and files
+        const fields: Record<string, unknown> = {};
+        const files: Record<string, unknown> = {};
 
-      // Simulate parsing body content if available
-      if (req.body) {
-        try {
-          // Mock basic field extraction
-          fields.name = 'Test Model';
-          fields.description = 'Test description';
+        // Simulate parsing body content if available
+        if ((req as { body?: unknown }).body) {
+          try {
+            // Mock basic field extraction
+            fields.name = 'Test Model';
+            fields.description = 'Test description';
 
-          // Mock file extraction
-          files.usdzFile = {
-            originalFilename: 'test.usdz',
-            mimetype: 'model/vnd.usdz+zip',
-            size: 1000,
-            filepath: '/tmp/test.usdz',
-          };
-          files.glbFile = {
-            originalFilename: 'test.glb',
-            mimetype: 'model/gltf-binary',
-            size: 1000,
-            filepath: '/tmp/test.glb',
-          };
+            // Mock file extraction
+            files.usdzFile = {
+              originalFilename: 'test.usdz',
+              mimetype: 'model/vnd.usdz+zip',
+              size: 1000,
+              filepath: '/tmp/test.usdz',
+            };
+            files.glbFile = {
+              originalFilename: 'test.glb',
+              mimetype: 'model/gltf-binary',
+              size: 1000,
+              filepath: '/tmp/test.glb',
+            };
 
-          // Call callback with success
+            // Call callback with success
+            callback(null, fields, files);
+          } catch (error) {
+            callback(error as Error, {}, {});
+          }
+        } else {
           callback(null, fields, files);
-        } catch (error) {
-          callback(error, {}, {});
         }
-      } else {
-        callback(null, fields, files);
-      }
-    }),
+      },
+    ),
   })),
 }));
 
 // Mock slugify
 vi.mock('slugify', () => ({
-  default: vi.fn((str: string, options?: any) => {
+  default: vi.fn((str: string, _options?: Record<string, unknown>) => {
     return str
       .toLowerCase()
       .replace(/\s+/g, '-')

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Box, Flex, VStack, Text, Heading, Badge } from '@chakra-ui/react';
 import { Avatar } from '@chakra-ui/react';
 import { Button } from '@/ui/button/Button';
-import { Table } from '@/ui/table/Table';
+import { Table, TableColumn, TableData } from '@/ui/table/Table';
 import { Card } from '@/ui/card/Card';
 import {
   FiUsers,
@@ -106,8 +106,9 @@ export default function AdminPage() {
   };
 
   const toggleUserRole = (user: User) => {
-    const newRole = user.role === 'admin' ? 'user' : 'admin';
-    updateUser(user._id, { role: newRole });
+    updateUser(user._id, {
+      role: user.role === 'admin' ? 'user' : 'admin',
+    });
   };
 
   const columns = [
@@ -115,7 +116,7 @@ export default function AdminPage() {
       key: 'user',
       header: 'Usuario',
       width: '2fr',
-      render: (value: any, user: User) => (
+      render: (_value: unknown, user: User) => (
         <Flex align='center' gap={3}>
           <Avatar.Root size='sm' bg='teal.500'>
             <Avatar.Fallback>{user.name?.charAt(0)}</Avatar.Fallback>
@@ -136,7 +137,7 @@ export default function AdminPage() {
       key: 'role',
       header: 'Rol',
       width: '150px',
-      render: (value: any, user: User) => (
+      render: (_value: unknown, user: User) => (
         <Badge
           colorPalette={user.role === 'admin' ? 'red' : 'blue'}
           size='sm'
@@ -154,7 +155,7 @@ export default function AdminPage() {
       key: 'active',
       header: 'Estado',
       width: '120px',
-      render: (value: any, user: User) => (
+      render: (_value: unknown, user: User) => (
         <Badge
           colorPalette={user.active ? 'green' : 'gray'}
           size='sm'
@@ -172,7 +173,7 @@ export default function AdminPage() {
       key: 'actions',
       header: 'Acciones',
       width: '200px',
-      render: (value: any, user: User) => (
+      render: (_value: unknown, user: User) => (
         <Flex gap={2}>
           <Button
             size='sm'
@@ -330,8 +331,8 @@ export default function AdminPage() {
             </Box>
 
             <Table
-              columns={columns}
-              data={users}
+              columns={columns as unknown as TableColumn[]}
+              data={users as unknown as TableData[]}
               loading={loading}
               emptyMessage='No hay usuarios registrados'
             />

@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest) {
     const usersCollection = db.collection('users');
 
     // Validate updates - only allow role and active fields
-    const allowedUpdates: { [key: string]: any } = {};
+    const allowedUpdates: Record<string, string | boolean> = {};
     if ('role' in updates && ['user', 'admin'].includes(updates.role)) {
       allowedUpdates.role = updates.role;
     }

@@ -100,7 +100,7 @@ describe('UploadRenderForm', () => {
         },
       }),
     };
-    (global.fetch as any).mockResolvedValue(mockResponse);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
 
     render(<UploadRenderForm />);
 

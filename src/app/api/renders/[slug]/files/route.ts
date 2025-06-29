@@ -85,7 +85,14 @@ export async function POST(
     }
 
     const uploadPromises = [];
-    const newFiles: any = { ...render.files };
+    const newFiles: Record<
+      string,
+      {
+        key: string;
+        url: string;
+        originalName: string;
+      }
+    > = { ...render.files };
 
     // Upload USDZ file if exists
     if (usdzFile) {

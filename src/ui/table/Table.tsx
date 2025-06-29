@@ -1,14 +1,14 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 
-interface TableColumn {
+export interface TableColumn {
   key: string;
   header: string;
   render?: (value: React.ReactNode, row: TableData) => React.ReactNode;
   width?: string;
 }
 
-interface TableData {
+export interface TableData {
   [key: string]: React.ReactNode;
 }
 

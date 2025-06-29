@@ -24,8 +24,9 @@ describe('Auth utilities', () => {
     const { getServerSession } = await import('next-auth/next');
     const { authOptions } = await import('./authOptions');
 
-    (getServerSession as any).mockResolvedValue({
+    vi.mocked(getServerSession).mockResolvedValue({
       user: { id: 'test-id', email: 'test@example.com' },
+      expires: '2024-12-31',
     });
 
     const session = await getSession();
@@ -33,13 +34,14 @@ describe('Auth utilities', () => {
     expect(getServerSession).toHaveBeenCalledWith(authOptions);
     expect(session).toEqual({
       user: { id: 'test-id', email: 'test@example.com' },
+      expires: '2024-12-31',
     });
   });
 
   it('should return null when no session exists', async () => {
     const { getServerSession } = await import('next-auth/next');
 
-    (getServerSession as any).mockResolvedValue(null);
+    vi.mocked(getServerSession).mockResolvedValue(null);
 
     const session = await getSession();
 

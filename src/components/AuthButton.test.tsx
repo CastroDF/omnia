@@ -25,9 +25,10 @@ describe('AuthButton', () => {
   });
 
   it('renders sign in button when not authenticated', () => {
-    (useSession as any).mockReturnValue({
+    vi.mocked(useSession).mockReturnValue({
       data: null,
       status: 'unauthenticated',
+      update: vi.fn(),
     });
 
     render(<AuthButton />);
@@ -37,9 +38,10 @@ describe('AuthButton', () => {
   });
 
   it('calls signIn when sign in button is clicked', () => {
-    (useSession as any).mockReturnValue({
+    vi.mocked(useSession).mockReturnValue({
       data: null,
       status: 'unauthenticated',
+      update: vi.fn(),
     });
 
     render(<AuthButton />);
@@ -51,14 +53,17 @@ describe('AuthButton', () => {
   });
 
   it('renders user name and sign out button when authenticated', () => {
-    (useSession as any).mockReturnValue({
+    vi.mocked(useSession).mockReturnValue({
       data: {
         user: {
+          id: 'test-user-id',
           name: 'John Doe',
           email: 'john@example.com',
         },
+        expires: '2024-12-31',
       },
       status: 'authenticated',
+      update: vi.fn(),
     });
 
     render(<AuthButton />);
@@ -67,14 +72,17 @@ describe('AuthButton', () => {
   });
 
   it('calls signOut when sign out button is clicked', () => {
-    (useSession as any).mockReturnValue({
+    vi.mocked(useSession).mockReturnValue({
       data: {
         user: {
+          id: 'test-user-id',
           name: 'John Doe',
           email: 'john@example.com',
         },
+        expires: '2024-12-31',
       },
       status: 'authenticated',
+      update: vi.fn(),
     });
 
     render(<AuthButton />);
@@ -86,9 +94,10 @@ describe('AuthButton', () => {
   });
 
   it('shows loading state', () => {
-    (useSession as any).mockReturnValue({
+    vi.mocked(useSession).mockReturnValue({
       data: null,
       status: 'loading',
+      update: vi.fn(),
     });
 
     render(<AuthButton />);

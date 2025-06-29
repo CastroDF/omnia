@@ -78,7 +78,10 @@ export async function DELETE(
     }
 
     // Update document in MongoDB
-    const updateQuery: any = {
+    const updateQuery: {
+      $unset: Record<string, string>;
+      $set: { updatedAt: Date };
+    } = {
       $unset: {},
       $set: { updatedAt: new Date() },
     };

@@ -8,12 +8,16 @@ vi.mock('mongodb', () => ({
   })),
 }));
 
+interface GlobalWithMongo {
+  _mongoClientPromise?: Promise<MongoClient>;
+}
+
 describe('MongoDB Connection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
     // Reset global variables
-    delete (global as any)._mongoClientPromise;
+    delete (global as GlobalWithMongo)._mongoClientPromise;
     // Set up basic environment variables for most tests
     vi.stubEnv(
       'MONGODB_URI',
@@ -53,7 +57,7 @@ describe('MongoDB Connection', () => {
     const { default: clientPromise2 } = await import('./mongodb');
 
     // In development, the client promise should be cached globally
-    expect((global as any)._mongoClientPromise).toBeDefined();
+    expect((global as GlobalWithMongo)._mongoClientPromise).toBeDefined();
 
     // Both should use the same cached promise
     expect(clientPromise1).toBe(clientPromise2);
@@ -68,14 +72,17 @@ describe('MongoDB Connection', () => {
     expect(MongoClient).toHaveBeenCalled();
 
     // In production, no global caching should occur
-    expect((global as any)._mongoClientPromise).toBeUndefined();
+    expect((global as GlobalWithMongo)._mongoClientPromise).toBeUndefined();
   });
 
   it('should handle connection properly', async () => {
     const mockConnect = vi.fn().mockResolvedValue('connected');
-    (MongoClient as any).mockImplementation(() => ({
-      connect: mockConnect,
-    }));
+    vi.mocked(MongoClient).mockImplementation(
+      () =>
+        ({
+          connect: mockConnect,
+        }) as unknown as MongoClient,
+    );
 
     const { default: clientPromise } = await import('./mongodb');
     const result = await clientPromise;
