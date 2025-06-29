@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import clientPromise from '@/lib/mongodb';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check authentication
     const session = await getSession();

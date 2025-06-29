@@ -246,16 +246,16 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                   <Box>
                     <Text fontWeight='bold'>📱 En iOS (iPhone/iPad):</Text>
                     <Text fontSize='sm' color='gray.600'>
-                      Toca "Ver en AR" para abrir Quick Look y coloca el modelo
-                      en tu espacio real
+                      Toca &ldquo;Ver en AR&rdquo; para abrir Quick Look y
+                      coloca el modelo en tu espacio real
                     </Text>
                   </Box>
 
                   <Box>
                     <Text fontWeight='bold'>🤖 En Android:</Text>
                     <Text fontSize='sm' color='gray.600'>
-                      Toca "Ver en AR" para abrir Scene Viewer de Google y
-                      experimentar AR
+                      Toca &ldquo;Ver en AR&rdquo; para abrir Scene Viewer de
+                      Google y experimentar AR
                     </Text>
                   </Box>
 

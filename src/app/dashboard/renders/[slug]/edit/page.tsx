@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Container,
@@ -32,13 +32,7 @@ export default function EditRenderPage() {
   const params = useParams();
   const slug = params.slug as string;
 
-  useEffect(() => {
-    if (slug) {
-      fetchRender();
-    }
-  }, [slug]);
-
-  const fetchRender = async () => {
+  const fetchRender = useCallback(async () => {
     try {
       const response = await fetch(`/api/renders/${slug}`);
       const data = await response.json();
@@ -54,7 +48,13 @@ export default function EditRenderPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    if (slug) {
+      fetchRender();
+    }
+  }, [slug, fetchRender]);
 
   const handleUploadFiles = async () => {
     if (!usdzFile && !glbFile) {

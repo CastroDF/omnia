@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSession } from '@/lib/auth';
 import clientPromise from '@/lib/mongodb';
-import formidable from 'formidable';
-import fs from 'fs';
 import slugify from 'slugify';
 
 const s3Client = new S3Client({
@@ -79,7 +77,18 @@ export async function POST(request: NextRequest) {
     const slug = `${baseSlug}-${timestamp}`;
 
     const uploadPromises = [];
-    const files: any = {};
+    const files: {
+      usdz?: {
+        key: string;
+        url: string;
+        originalName: string;
+      };
+      glb?: {
+        key: string;
+        url: string;
+        originalName: string;
+      };
+    } = {};
 
     // Upload USDZ file for iOS AR
     if (usdzFile) {

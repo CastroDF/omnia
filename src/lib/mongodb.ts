@@ -1,28 +1,36 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 
-if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
-  throw new Error(
-    'Please add MONGODB_USERNAME and MONGODB_PASSWORD to .env.local',
-  );
+if (!process.env.MONGODB_URI) {
+  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
 }
 
-const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@omnia-cluster.dnwcklu.mongodb.net/?retryWrites=true&w=majority&appName=omnia-cluster`;
+const uri = process.env.MONGODB_URI;
 const options = {};
 
-let client;
+let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === 'development') {
-  // In development, use a global variable to cache the client
-  if (!(global as any)._mongoClientPromise) {
+  // In development mode, use a global variable to preserve the value across module reloads
+  const globalWithMongo = global as typeof globalThis & {
+    _mongoClientPromise?: Promise<MongoClient>;
+  };
+
+  if (!globalWithMongo._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    (global as any)._mongoClientPromise = client.connect();
+    globalWithMongo._mongoClientPromise = client.connect();
   }
-  clientPromise = (global as any)._mongoClientPromise;
+  clientPromise = globalWithMongo._mongoClientPromise;
 } else {
-  // In production, always create a new client
+  // In production mode, it's best to not use a global variable
   client = new MongoClient(uri, options);
   clientPromise = client.connect();
 }
+
+// Export the database connection helper
+export const getDatabase = async (): Promise<Db> => {
+  const client = await clientPromise;
+  return client.db('omnia');
+};
 
 export default clientPromise;
