@@ -1,16 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Button,
-  Stack,
-  Card,
-  Center,
-} from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
 
 interface RenderViewerProps {
@@ -78,8 +70,8 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
     }
   };
 
-  const getARButtonColor = () => {
-    return arCapability === 'available' ? 'teal' : 'gray';
+  const getARButtonVariant = () => {
+    return arCapability === 'available' ? 'default' : 'secondary';
   };
 
   const handleARClick = () => {
@@ -129,171 +121,174 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
   };
 
   return (
-    <Box minH='100vh' bg='gray.50'>
-      <Container maxW='full' p={0}>
+    <div className='min-h-screen bg-gray-50'>
+      <div className='w-full p-0'>
         {/* Header */}
-        <Box bg='white' borderBottom='1px' borderColor='gray.200' p={4}>
-          <Container maxW='7xl'>
-            <Stack gap={3}>
-              <Box>
-                <Heading size={{ base: 'lg', md: 'xl' }} mb={1}>
+        <div className='bg-white border-b border-gray-200 p-4'>
+          <div className='container max-w-7xl mx-auto'>
+            <div className='space-y-3'>
+              <div>
+                <h1 className='text-xl md:text-2xl font-bold mb-1'>
                   {render.name}
-                </Heading>
+                </h1>
                 {render.description && (
-                  <Text color='gray.600' fontSize={{ base: 'sm', md: 'lg' }}>
+                  <p className='text-gray-600 text-sm md:text-lg'>
                     {render.description}
-                  </Text>
+                  </p>
                 )}
-              </Box>
+              </div>
 
-              <Stack direction={{ base: 'column', sm: 'row' }} gap={3}>
+              <div className='flex flex-col sm:flex-row gap-3'>
                 <Button
-                  colorScheme={getARButtonColor()}
-                  size={{ base: 'sm', md: 'md' }}
+                  variant={getARButtonVariant()}
+                  size='sm'
+                  className='md:text-base'
                   onClick={handleARClick}
                 >
                   {getARButtonText()}
                 </Button>
                 <Button
                   variant='outline'
-                  size={{ base: 'sm', md: 'md' }}
+                  size='sm'
+                  className='md:text-base'
                   onClick={() => window.location.reload()}
                 >
                   Reiniciar
                 </Button>
-              </Stack>
+              </div>
 
-              <Text fontSize='xs' color='gray.500'>
+              <p className='text-xs text-gray-500'>
                 {new Date(render.createdAt).toLocaleDateString()} •{' '}
                 {render.userEmail}
-              </Text>
-            </Stack>
-          </Container>
-        </Box>
+              </p>
+            </div>
+          </div>
+        </div>
 
-        {/* Contenido principal - Vista previa y información */}
-        <Container maxW='4xl' py={8}>
-          <Stack gap={6}>
-            {/* Card de vista previa */}
-            <Card.Root>
-              <Card.Body p={8}>
-                <Center>
-                  <Stack gap={4} textAlign='center' maxW='md'>
-                    <Box fontSize='6xl'>🥽</Box>
-                    <Heading size='lg'>Experiencia AR Lista</Heading>
-                    <Text color='gray.600'>
+        {/* Main Content - Preview and Information */}
+        <div className='container max-w-4xl mx-auto py-8'>
+          <div className='space-y-6'>
+            {/* Preview Card */}
+            <Card>
+              <CardContent className='p-8'>
+                <div className='flex justify-center'>
+                  <div className='space-y-4 text-center max-w-md'>
+                    <div className='text-6xl'>🥽</div>
+                    <h2 className='text-xl font-bold'>Experiencia AR Lista</h2>
+                    <p className='text-gray-600'>
                       Este modelo está optimizado para Realidad Aumentada nativa
                       en tu dispositivo móvil.
-                    </Text>
+                    </p>
 
                     <Button
-                      colorScheme={getARButtonColor()}
+                      variant={getARButtonVariant()}
                       size='lg'
                       onClick={handleARClick}
                     >
                       {getARButtonText()}
                     </Button>
-                  </Stack>
-                </Center>
-              </Card.Body>
-            </Card.Root>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Información de compatibilidad */}
-            <Card.Root>
-              <Card.Header>
-                <Heading size='md'>Compatibilidad</Heading>
-              </Card.Header>
-              <Card.Body>
-                <Stack gap={3}>
-                  <Box>
-                    <Text
-                      fontWeight='bold'
-                      color={render.files.usdz ? 'green.600' : 'red.500'}
-                    >
-                      📱 iOS (iPhone/iPad)
-                    </Text>
-                    <Text fontSize='sm' color='gray.600'>
-                      {render.files.usdz
-                        ? `✅ Compatible - Archivo ${render.files.usdz.originalName}`
-                        : '❌ No compatible - Falta archivo .usdz'}
-                    </Text>
-                  </Box>
+            {/* Instructions Card */}
+            <Card>
+              <CardContent className='p-6'>
+                <h3 className='text-lg font-bold mb-4'>
+                  Instrucciones para AR
+                </h3>
+                <div className='space-y-4 text-sm text-gray-600'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <h4 className='font-semibold text-gray-900'>
+                        📱 iPhone/iPad
+                      </h4>
+                      <ul className='space-y-1 list-disc list-inside'>
+                        <li>Toca el botón &ldquo;Ver en AR&rdquo;</li>
+                        <li>Permite el acceso a la cámara</li>
+                        <li>
+                          Mueve el dispositivo para encontrar una superficie
+                        </li>
+                        <li>Toca para colocar el modelo</li>
+                      </ul>
+                    </div>
 
-                  <Box>
-                    <Text
-                      fontWeight='bold'
-                      color={render.files.glb ? 'green.600' : 'red.500'}
-                    >
-                      🤖 Android
-                    </Text>
-                    <Text fontSize='sm' color='gray.600'>
-                      {render.files.glb
-                        ? `✅ Compatible - Archivo ${render.files.glb.originalName}`
-                        : '❌ No compatible - Falta archivo .glb'}
-                    </Text>
-                  </Box>
-                </Stack>
-              </Card.Body>
-            </Card.Root>
+                    <div className='space-y-2'>
+                      <h4 className='font-semibold text-gray-900'>
+                        🤖 Android
+                      </h4>
+                      <ul className='space-y-1 list-disc list-inside'>
+                        <li>Toca el botón &ldquo;Ver en AR&rdquo;</li>
+                        <li>Se abrirá Google Scene Viewer</li>
+                        <li>Permite permisos de cámara</li>
+                        <li>Apunta a una superficie plana</li>
+                      </ul>
+                    </div>
+                  </div>
 
-            {/* Instrucciones */}
-            <Card.Root>
-              <Card.Header>
-                <Heading size='md'>Cómo usar AR</Heading>
-              </Card.Header>
-              <Card.Body>
-                <Stack gap={3}>
-                  <Box>
-                    <Text fontWeight='bold'>📱 En iOS (iPhone/iPad):</Text>
-                    <Text fontSize='sm' color='gray.600'>
-                      Toca &ldquo;Ver en AR&rdquo; para abrir Quick Look y
-                      coloca el modelo en tu espacio real
-                    </Text>
-                  </Box>
+                  <div className='border-t pt-4'>
+                    <h4 className='font-semibold text-gray-900 mb-2'>
+                      💡 Consejos para mejor experiencia
+                    </h4>
+                    <ul className='space-y-1 list-disc list-inside'>
+                      <li>Usa buena iluminación</li>
+                      <li>Busca superficies planas como mesas o suelo</li>
+                      <li>Mantén el dispositivo estable mientras se carga</li>
+                      <li>
+                        Si no funciona, recarga la página e intenta nuevamente
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                  <Box>
-                    <Text fontWeight='bold'>🤖 En Android:</Text>
-                    <Text fontSize='sm' color='gray.600'>
-                      Toca &ldquo;Ver en AR&rdquo; para abrir Scene Viewer de
-                      Google y experimentar AR
-                    </Text>
-                  </Box>
+            {/* File Info Card */}
+            <Card>
+              <CardContent className='p-6'>
+                <h3 className='text-lg font-bold mb-4'>
+                  Información del Modelo
+                </h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+                  <div className='space-y-2'>
+                    <div>
+                      <span className='font-semibold'>Nombre:</span>{' '}
+                      {render.name}
+                    </div>
+                    <div>
+                      <span className='font-semibold'>Slug:</span> {render.slug}
+                    </div>
+                    <div>
+                      <span className='font-semibold'>Creado:</span>{' '}
+                      {new Date(render.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
 
-                  <Box>
-                    <Text fontWeight='bold'>💻 En Desktop:</Text>
-                    <Text fontSize='sm' color='gray.600'>
-                      Comparte este enlace con dispositivos móviles para la
-                      experiencia AR completa
-                    </Text>
-                  </Box>
-                </Stack>
-              </Card.Body>
-            </Card.Root>
-
-            {/* Botón para compartir */}
-            <Box textAlign='center'>
-              <Button
-                size='lg'
-                variant='outline'
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: render.name,
-                      text: `Mira este modelo en AR: ${render.name}`,
-                      url: window.location.href,
-                    });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('¡Enlace copiado! Compártelo en tus historias de IG');
-                  }
-                }}
-              >
-                📱 Compartir en Instagram Stories
-              </Button>
-            </Box>
-          </Stack>
-        </Container>
-      </Container>
-    </Box>
+                  <div className='space-y-2'>
+                    <div>
+                      <span className='font-semibold'>iOS (.usdz):</span>{' '}
+                      {render.files.usdz ? (
+                        <span className='text-green-600'>✅ Disponible</span>
+                      ) : (
+                        <span className='text-red-600'>❌ No disponible</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className='font-semibold'>Android (.glb):</span>{' '}
+                      {render.files.glb ? (
+                        <span className='text-green-600'>✅ Disponible</span>
+                      ) : (
+                        <span className='text-red-600'>❌ No disponible</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

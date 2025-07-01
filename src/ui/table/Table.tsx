@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { cn } from '@/lib/utils';
 
 export interface TableColumn {
   key: string;
@@ -17,6 +17,7 @@ interface TableProps {
   data: TableData[];
   loading?: boolean;
   emptyMessage?: string;
+  className?: string;
 }
 
 export const Table: React.FC<TableProps> = ({
@@ -24,99 +25,90 @@ export const Table: React.FC<TableProps> = ({
   data,
   loading = false,
   emptyMessage = 'No hay datos disponibles',
+  className,
 }) => {
   if (loading) {
     return (
-      <Box
-        bg='gray.800'
-        borderRadius='lg'
-        border='1px'
-        borderColor='gray.700'
-        p={8}
-        textAlign='center'
+      <div
+        className={cn(
+          'bg-gray-800 rounded-lg border border-gray-700 p-8 text-center',
+          className,
+        )}
       >
-        <Text color='gray.400'>Cargando...</Text>
-      </Box>
+        <div className='flex items-center justify-center'>
+          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400'></div>
+          <span className='ml-3 text-gray-400'>Cargando...</span>
+        </div>
+      </div>
     );
   }
 
   if (data.length === 0) {
     return (
-      <Box
-        bg='gray.800'
-        borderRadius='lg'
-        border='1px'
-        borderColor='gray.700'
-        p={8}
-        textAlign='center'
+      <div
+        className={cn(
+          'bg-gray-800 rounded-lg border border-gray-700 p-8 text-center',
+          className,
+        )}
       >
-        <Text color='gray.400'>{emptyMessage}</Text>
-      </Box>
+        <p className='text-gray-400'>{emptyMessage}</p>
+      </div>
     );
   }
 
   return (
-    <Box
-      bg='gray.800'
-      borderRadius='lg'
-      border='1px'
-      borderColor='gray.700'
-      overflow='hidden'
+    <div
+      className={cn(
+        'bg-gray-800 rounded-lg border border-gray-700 overflow-hidden',
+        className,
+      )}
     >
       {/* Header */}
-      <Box
-        bg='gray.700'
-        borderBottom='1px'
-        borderColor='gray.600'
-        display='grid'
-        gridTemplateColumns={columns.map(col => col.width || '1fr').join(' ')}
-        gap={4}
-        p={4}
+      <div
+        className='bg-gray-700 border-b border-gray-600 grid gap-4 p-4'
+        style={{
+          gridTemplateColumns: columns.map(col => col.width || '1fr').join(' '),
+        }}
       >
         {columns.map(column => (
-          <Text
+          <span
             key={column.key}
-            fontWeight='semibold'
-            color='gray.200'
-            fontSize='sm'
-            textTransform='uppercase'
-            letterSpacing='wider'
+            className='font-semibold text-gray-200 text-sm uppercase tracking-wider'
           >
             {column.header}
-          </Text>
+          </span>
         ))}
-      </Box>
+      </div>
 
       {/* Body */}
-      <Box>
+      <div>
         {data.map((row, index) => (
-          <Box
+          <div
             key={index}
-            display='grid'
-            gridTemplateColumns={columns
-              .map(col => col.width || '1fr')
-              .join(' ')}
-            gap={4}
-            p={4}
-            borderBottom={index < data.length - 1 ? '1px' : 'none'}
-            borderColor='gray.700'
-            _hover={{ bg: 'gray.750' }}
-            transition='background 0.2s'
+            className={cn(
+              'grid gap-4 p-4 hover:bg-gray-750 transition-colors duration-200',
+              index < data.length - 1 ? 'border-b border-gray-700' : '',
+            )}
+            style={{
+              gridTemplateColumns: columns
+                .map(col => col.width || '1fr')
+                .join(' '),
+            }}
           >
             {columns.map(column => (
-              <Box key={column.key} display='flex' alignItems='center'>
+              <div key={column.key} className='flex items-center'>
                 {column.render ? (
                   column.render(row[column.key], row)
                 ) : (
-                  <Text color='gray.300' fontSize='sm'>
+                  <span className='text-gray-300 text-sm'>
                     {row[column.key] || '-'}
-                  </Text>
+                  </span>
                 )}
-              </Box>
+              </div>
             ))}
-          </Box>
+          </div>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };

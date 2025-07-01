@@ -1,6 +1,6 @@
-import { VStack, HStack, Text, Icon } from '@chakra-ui/react';
 import React from 'react';
 import { FiStar } from 'react-icons/fi';
+import { cn } from '@/lib/utils';
 
 export interface TestimonialProps {
   text: string;
@@ -8,6 +8,7 @@ export interface TestimonialProps {
   role: string;
   rating?: number;
   company?: string;
+  className?: string;
 }
 
 export const Testimonial: React.FC<TestimonialProps> = ({
@@ -16,27 +17,26 @@ export const Testimonial: React.FC<TestimonialProps> = ({
   role,
   rating = 5,
   company,
+  className,
 }) => {
   return (
-    <VStack gap={4} align='start'>
-      <HStack>
+    <div className={cn('space-y-4', className)}>
+      <div className='flex items-center'>
         {[...Array(rating)].map((_, i) => (
-          <Icon key={i} as={FiStar} color='yellow.400' />
+          <FiStar key={i} className='text-yellow-400' />
         ))}
-      </HStack>
+      </div>
 
-      <Text fontSize='sm' color='gray.600'>
-        &ldquo;{text}&rdquo;
-      </Text>
+      <p className='text-sm text-gray-600'>&ldquo;{text}&rdquo;</p>
 
-      <VStack gap={1} align='start'>
-        <Text fontWeight='bold'>{author}</Text>
-        <Text fontSize='sm' color='gray.500'>
+      <div className='space-y-1'>
+        <p className='font-bold text-gray-900'>{author}</p>
+        <p className='text-sm text-gray-500'>
           {role}
           {company && ` - ${company}`}
-        </Text>
-      </VStack>
-    </VStack>
+        </p>
+      </div>
+    </div>
   );
 };
 

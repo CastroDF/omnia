@@ -2,18 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Box,
-  VStack,
-  Text,
-  Heading,
-  Input,
-  Textarea,
-  Badge,
-  Flex,
-} from '@chakra-ui/react';
-import { Button } from '@/ui/button/Button';
-import { Card } from '@/ui/card/Card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   FiUpload,
   FiSmartphone,
@@ -104,306 +96,227 @@ export default function UploadRenderForm() {
   };
 
   return (
-    <VStack gap={6} w='full'>
+    <div className='space-y-6 w-full'>
       {/* Main form card */}
-      <Card.Root bg='gray.800' borderColor='gray.700' w='full'>
-        <Card.Body>
-          <Box as='form' onSubmit={handleSubmit}>
-            <VStack gap={6}>
+      <Card className='bg-gray-800 border-gray-700 w-full'>
+        <CardContent className='p-6'>
+          <form onSubmit={handleSubmit}>
+            <div className='space-y-6'>
               {/* Basic information section */}
-              <Box w='full'>
-                <Heading size='md' color='white' mb={4}>
+              <div className='w-full'>
+                <h2 className='text-lg font-semibold text-white mb-4'>
                   📝 Información del Modelo
-                </Heading>
+                </h2>
 
-                <VStack gap={4}>
-                  <Box w='full'>
-                    <Text fontWeight='semibold' mb={2} color='gray.300'>
+                <div className='space-y-4'>
+                  <div className='w-full'>
+                    <label className='block font-semibold mb-2 text-gray-300'>
                       Nombre del modelo *
-                    </Text>
+                    </label>
                     <Input
                       type='text'
                       value={name}
                       onChange={e => setName(e.target.value)}
                       placeholder='Ej: Audi R8 2024'
-                      bg='gray.700'
-                      border='1px'
-                      borderColor='gray.600'
-                      color='white'
-                      _placeholder={{ color: 'gray.400' }}
-                      _focus={{
-                        borderColor: 'teal.500',
-                        boxShadow: '0 0 0 1px teal.500',
-                      }}
-                      borderRadius='lg'
+                      className='bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-teal-500'
                       required
                     />
-                  </Box>
+                  </div>
 
-                  <Box w='full'>
-                    <Text fontWeight='semibold' mb={2} color='gray.300'>
+                  <div className='w-full'>
+                    <label className='block font-semibold mb-2 text-gray-300'>
                       Descripción
-                    </Text>
+                    </label>
                     <Textarea
                       value={description}
                       onChange={e => setDescription(e.target.value)}
                       placeholder='Describe tu modelo 3D...'
-                      bg='gray.700'
-                      border='1px'
-                      borderColor='gray.600'
-                      color='white'
-                      _placeholder={{ color: 'gray.400' }}
-                      _focus={{
-                        borderColor: 'teal.500',
-                        boxShadow: '0 0 0 1px teal.500',
-                      }}
-                      borderRadius='lg'
+                      className='bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-teal-500 resize-none'
                       rows={3}
-                      resize='vertical'
                     />
-                  </Box>
-                </VStack>
-              </Box>
+                  </div>
+                </div>
+              </div>
 
               {/* File upload sections */}
-              <Box w='full'>
-                <Heading size='md' color='white' mb={4}>
+              <div className='w-full'>
+                <h2 className='text-lg font-semibold text-white mb-4'>
                   🥽 Archivos AR
-                </Heading>
+                </h2>
 
-                <VStack gap={4}>
+                <div className='space-y-4'>
                   {/* USDZ File Upload */}
-                  <Card.Root bg='gray.700' borderColor='gray.600' w='full'>
-                    <Card.Body>
-                      <VStack gap={3}>
-                        <Flex align='center' justify='space-between' w='full'>
-                          <Flex align='center' gap={3}>
-                            <FiSmartphone size={20} color='teal' />
-                            <Text fontWeight='semibold' color='white'>
+                  <Card className='bg-gray-700 border-gray-600 w-full'>
+                    <CardContent className='p-4'>
+                      <div className='space-y-3'>
+                        <div className='flex items-center justify-between w-full'>
+                          <div className='flex items-center gap-3'>
+                            <FiSmartphone size={20} className='text-teal-400' />
+                            <span className='font-semibold text-white'>
                               Archivo USDZ
-                            </Text>
-                            <Badge colorPalette='blue' size='sm'>
+                            </span>
+                            <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400'>
                               iOS AR
-                            </Badge>
-                          </Flex>
-                        </Flex>
+                            </span>
+                          </div>
+                        </div>
 
-                        <Box w='full'>
+                        <div className='w-full'>
                           <Input
                             type='file'
                             accept='.usdz'
                             onChange={e =>
                               setUsdzFile(e.target.files?.[0] || null)
                             }
-                            bg='gray.800'
-                            border='1px'
-                            borderColor='gray.500'
-                            color='white'
-                            _focus={{
-                              borderColor: 'teal.500',
-                              boxShadow: '0 0 0 1px teal.500',
-                            }}
-                            borderRadius='lg'
-                            pt={1}
+                            className='bg-gray-800 border-gray-500 text-white file:bg-gray-600 file:text-white file:border-0 file:mr-4 file:py-2 file:px-4 file:rounded-md file:text-sm'
                           />
-                          <Text fontSize='sm' color='gray.400' mt={2}>
-                            Para AR nativo en iPhone/iPad usando Quick Look
-                          </Text>
-                          {usdzFile && (
-                            <Flex align='center' gap={2} mt={2}>
-                              <FiCheckCircle color='green' size={16} />
-                              <Text fontSize='sm' color='green.400'>
-                                Archivo seleccionado: {usdzFile.name}
-                              </Text>
-                            </Flex>
-                          )}
-                        </Box>
-                      </VStack>
-                    </Card.Body>
-                  </Card.Root>
+                        </div>
+
+                        {usdzFile && (
+                          <div className='flex items-center gap-2 text-green-400 text-sm'>
+                            <FiCheckCircle size={16} />
+                            <span>{usdzFile.name}</span>
+                          </div>
+                        )}
+
+                        <p className='text-xs text-gray-400'>
+                          Compatible con iPhone y iPad (iOS 12+). Tamaño máximo:
+                          50MB
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* GLB File Upload */}
-                  <Card.Root bg='gray.700' borderColor='gray.600' w='full'>
-                    <Card.Body>
-                      <VStack gap={3}>
-                        <Flex align='center' justify='space-between' w='full'>
-                          <Flex align='center' gap={3}>
-                            <FiTablet size={20} color='teal' />
-                            <Text fontWeight='semibold' color='white'>
+                  <Card className='bg-gray-700 border-gray-600 w-full'>
+                    <CardContent className='p-4'>
+                      <div className='space-y-3'>
+                        <div className='flex items-center justify-between w-full'>
+                          <div className='flex items-center gap-3'>
+                            <FiTablet size={20} className='text-teal-400' />
+                            <span className='font-semibold text-white'>
                               Archivo GLB
-                            </Text>
-                            <Badge colorPalette='green' size='sm'>
+                            </span>
+                            <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400'>
                               Android AR
-                            </Badge>
-                          </Flex>
-                        </Flex>
+                            </span>
+                          </div>
+                        </div>
 
-                        <Box w='full'>
+                        <div className='w-full'>
                           <Input
                             type='file'
                             accept='.glb'
                             onChange={e =>
                               setGlbFile(e.target.files?.[0] || null)
                             }
-                            bg='gray.800'
-                            border='1px'
-                            borderColor='gray.500'
-                            color='white'
-                            _focus={{
-                              borderColor: 'teal.500',
-                              boxShadow: '0 0 0 1px teal.500',
-                            }}
-                            borderRadius='lg'
-                            pt={1}
+                            className='bg-gray-800 border-gray-500 text-white file:bg-gray-600 file:text-white file:border-0 file:mr-4 file:py-2 file:px-4 file:rounded-md file:text-sm'
                           />
-                          <Text fontSize='sm' color='gray.400' mt={2}>
-                            Para AR nativo en Android usando Scene Viewer
-                          </Text>
-                          {glbFile && (
-                            <Flex align='center' gap={2} mt={2}>
-                              <FiCheckCircle color='green' size={16} />
-                              <Text fontSize='sm' color='green.400'>
-                                Archivo seleccionado: {glbFile.name}
-                              </Text>
-                            </Flex>
-                          )}
-                        </Box>
-                      </VStack>
-                    </Card.Body>
-                  </Card.Root>
-                </VStack>
-              </Box>
+                        </div>
 
-              {/* Submit button */}
-              <Button
-                type='submit'
-                variant='primary'
-                size='lg'
-                loading={isUploading}
-                disabled={(!usdzFile && !glbFile) || !name || isUploading}
-                w='full'
-                leftIcon={<FiUpload />}
-              >
-                {isUploading ? 'Subiendo...' : 'Subir Modelo AR'}
-              </Button>
+                        {glbFile && (
+                          <div className='flex items-center gap-2 text-green-400 text-sm'>
+                            <FiCheckCircle size={16} />
+                            <span>{glbFile.name}</span>
+                          </div>
+                        )}
 
-              <Text fontSize='sm' color='gray.500' textAlign='center'>
-                * Se requiere al menos un archivo (USDZ o GLB) y el nombre del
-                modelo
-              </Text>
-            </VStack>
-          </Box>
-        </Card.Body>
-      </Card.Root>
+                        <p className='text-xs text-gray-400'>
+                          Compatible con Android 8.0+ y Chrome. Tamaño máximo:
+                          50MB
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
 
-      {/* Upload progress */}
-      {isUploading && (
-        <Card.Root bg='gray.700' borderColor='gray.600' w='full'>
-          <Card.Body>
-            <VStack gap={3}>
-              <Flex align='center' gap={2}>
-                <FiUpload color='teal' />
-                <Text color='white' fontWeight='semibold'>
-                  Subiendo archivos...
-                </Text>
-              </Flex>
-              <Box w='full'>
-                <Box
-                  w='full'
-                  bg='gray.600'
-                  borderRadius='full'
-                  h='3'
-                  overflow='hidden'
-                >
-                  <Box
-                    bg='teal.500'
-                    h='full'
-                    borderRadius='full'
-                    w={`${uploadProgress}%`}
-                    transition='width 0.3s ease'
-                  />
-                </Box>
-                <Text fontSize='sm' color='gray.400' mt={1} textAlign='center'>
-                  {uploadProgress}% completado
-                </Text>
-              </Box>
-            </VStack>
-          </Card.Body>
-        </Card.Root>
-      )}
-
-      {/* Result */}
-      {result && (
-        <Card.Root
-          bg={result.success ? 'green.900' : 'red.900'}
-          borderColor={result.success ? 'green.700' : 'red.700'}
-          w='full'
-        >
-          <Card.Body>
-            {result.success ? (
-              <VStack gap={4} align='start'>
-                <Flex align='center' gap={2}>
-                  <FiCheckCircle color='green' size={20} />
-                  <Text fontWeight='bold' color='green.300' fontSize='lg'>
-                    ¡Modelo AR subido exitosamente!
-                  </Text>
-                </Flex>
-
-                <Box w='full'>
-                  <Text color='green.200' mb={2}>
-                    <Text as='span' fontWeight='semibold'>
-                      Enlace público:
-                    </Text>
-                  </Text>
-                  <Box
-                    p={3}
-                    bg='gray.800'
-                    borderRadius='lg'
-                    border='1px'
-                    borderColor='gray.600'
+              {/* Upload button and progress */}
+              <div className='w-full pt-4'>
+                {!isUploading && !result && (
+                  <Button
+                    type='submit'
+                    size='lg'
+                    className='w-full bg-teal-600 hover:bg-teal-700 text-white'
+                    disabled={!name.trim() || (!usdzFile && !glbFile)}
                   >
-                    <Text color='teal.400' fontFamily='mono' fontSize='sm'>
-                      {typeof window !== 'undefined'
-                        ? window.location.origin
-                        : ''}
-                      /render/{result.slug}
-                    </Text>
-                  </Box>
-                </Box>
-
-                {description && (
-                  <Text color='green.200' fontSize='sm'>
-                    <Text as='span' fontWeight='semibold'>
-                      Descripción:
-                    </Text>{' '}
-                    {description}
-                  </Text>
+                    <FiUpload className='mr-2' />
+                    Subir Modelo AR
+                  </Button>
                 )}
 
-                <Box p={3} bg='teal.800' borderRadius='lg' w='full'>
-                  <Text fontSize='sm' color='teal.100'>
-                    💡 Comparte este enlace en Instagram Stories para AR nativo
-                  </Text>
-                </Box>
+                {isUploading && (
+                  <div className='space-y-3'>
+                    <div className='w-full bg-gray-700 rounded-full h-3'>
+                      <div
+                        className='bg-teal-600 h-3 rounded-full transition-all duration-300'
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                    <p className='text-center text-white text-sm'>
+                      Subiendo archivos... {uploadProgress}%
+                    </p>
+                  </div>
+                )}
 
-                <Button
-                  variant='outline'
-                  leftIcon={<FiArrowRight />}
-                  onClick={() => router.push('/dashboard/renders')}
-                  w='full'
-                >
-                  Ver Mis Modelos AR
-                </Button>
-              </VStack>
-            ) : (
-              <Flex align='center' gap={2}>
-                <FiAlertCircle color='red' size={20} />
-                <Text color='red.300'>{result.error}</Text>
-              </Flex>
-            )}
-          </Card.Body>
-        </Card.Root>
-      )}
-    </VStack>
+                {result && !isUploading && (
+                  <div
+                    className={`p-4 rounded-lg ${
+                      result.success
+                        ? 'bg-green-500/20 border border-green-500/30'
+                        : 'bg-red-500/20 border border-red-500/30'
+                    }`}
+                  >
+                    <div className='flex items-center gap-2'>
+                      {result.success ? (
+                        <FiCheckCircle className='text-green-400' />
+                      ) : (
+                        <FiAlertCircle className='text-red-400' />
+                      )}
+                      <span
+                        className={`font-semibold ${
+                          result.success ? 'text-green-400' : 'text-red-400'
+                        }`}
+                      >
+                        {result.success ? '¡Éxito!' : 'Error'}
+                      </span>
+                    </div>
+
+                    {result.success && result.slug ? (
+                      <div className='mt-3 space-y-3'>
+                        <p className='text-green-100'>
+                          Tu modelo AR fue subido correctamente y está listo
+                          para usar.
+                        </p>
+                        <div className='flex gap-2'>
+                          <Button
+                            onClick={() =>
+                              router.push(`/render/${result.slug}`)
+                            }
+                            className='bg-green-600 hover:bg-green-700'
+                          >
+                            Ver en AR
+                            <FiArrowRight className='ml-2' />
+                          </Button>
+                          <Button
+                            variant='outline'
+                            onClick={() => router.push('/dashboard/renders')}
+                            className='border-green-500 text-green-400 hover:bg-green-500/10'
+                          >
+                            Ir a Mis Renders
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className='text-red-100 mt-2'>{result.error}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

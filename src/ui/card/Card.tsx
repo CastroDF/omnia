@@ -1,45 +1,53 @@
-import { Box } from '@chakra-ui/react';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 // Card.Root: Main container
-function CardRoot({ children, ...props }: React.ComponentProps<typeof Box>) {
+const CardRoot = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Box
-      bg='white'
-      borderRadius='xl'
-      boxShadow='md'
-      borderWidth={props.borderWidth || 1}
-      borderColor={props.borderColor || 'gray.200'}
+    <div
+      className={cn(
+        'bg-white rounded-xl shadow-md border border-gray-200',
+        className,
+      )}
       {...props}
     >
       {children}
-    </Box>
+    </div>
   );
-}
+};
 
 // Card.Body: Main content
-function CardBody({ children, ...props }: React.ComponentProps<typeof Box>) {
+const CardBody = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Box p={props.p || 6} {...props}>
+    <div className={cn('p-6', className)} {...props}>
       {children}
-    </Box>
+    </div>
   );
-}
+};
 
 // Card.Header: Card header
-function CardHeader({ children, ...props }: React.ComponentProps<typeof Box>) {
+const CardHeader = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Box
-      px={props.px || 6}
-      py={props.py || 4}
-      borderBottom='1px'
-      borderColor='gray.100'
+    <div
+      className={cn('px-6 py-4 border-b border-gray-100', className)}
       {...props}
     >
       {children}
-    </Box>
+    </div>
   );
-}
+};
 
 export const Card = {
   Root: CardRoot,

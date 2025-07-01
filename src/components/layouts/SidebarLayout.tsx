@@ -1,14 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Box,
-  Flex,
-  Text,
-  Heading,
-  Input,
-  InputElement,
-} from '@chakra-ui/react';
+import { Input } from '@/components/ui/input';
 import { FiSearch } from 'react-icons/fi';
 
 interface SidebarLayoutProps {
@@ -40,69 +33,45 @@ export default function SidebarLayout({
   headerActions,
 }: SidebarLayoutProps) {
   return (
-    <Flex h='100vh' bg='gray.900'>
+    <div className='flex h-screen bg-gray-900'>
       {/* Sidebar */}
-      <Box w='280px' bg='gray.800' borderRight='1px' borderColor='gray.700'>
-        <Box p={6}>
-          <Heading size='lg' color='teal.400'>
-            {sidebarTitle}
-          </Heading>
+      <div className='w-72 bg-gray-800 border-r border-gray-700'>
+        <div className='p-6'>
+          <h1 className='text-lg font-bold text-teal-400'>{sidebarTitle}</h1>
           {sidebarSubtitle && (
-            <Text fontSize='sm' color='gray.400' mt={1}>
-              {sidebarSubtitle}
-            </Text>
+            <p className='text-sm text-gray-400 mt-1'>{sidebarSubtitle}</p>
           )}
-        </Box>
+        </div>
 
         {/* Sidebar content */}
-        <Box px={4}>{sidebarContent}</Box>
-      </Box>
+        <div className='px-4'>{sidebarContent}</div>
+      </div>
 
       {/* Main content */}
-      <Box flex={1}>
+      <div className='flex-1'>
         {/* Header */}
-        <Flex
-          bg='gray.800'
-          borderBottom='1px'
-          borderColor='gray.700'
-          px={6}
-          py={4}
-          align='center'
-          justify='space-between'
-        >
+        <div className='bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between'>
           {/* Search */}
-          <Box w='400px' position='relative'>
-            <InputElement
-              pointerEvents='none'
-              position='absolute'
-              left={3}
-              top='50%'
-              transform='translateY(-50%)'
-            >
-              <FiSearch color='gray' />
-            </InputElement>
+          <div className='w-96 relative'>
+            <div className='absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none'>
+              <FiSearch className='text-gray-400' />
+            </div>
             <Input
               type='search'
               placeholder={searchPlaceholder}
-              bg='gray.700'
-              border='1px'
-              borderColor='gray.600'
-              color='white'
-              pl={10}
-              _placeholder={{ color: 'gray.400' }}
-              _focus={{ borderColor: 'teal.500' }}
+              className='bg-gray-700 border-gray-600 text-white pl-10 placeholder:text-gray-400 focus:border-teal-500'
               value={searchValue}
               onChange={e => onSearchChange?.(e.target.value)}
             />
-          </Box>
+          </div>
 
           {/* Header actions (if any) */}
-          {headerActions && <Box>{headerActions}</Box>}
-        </Flex>
+          {headerActions && <div>{headerActions}</div>}
+        </div>
 
         {/* Main content area */}
-        <Box p={6}>{children}</Box>
-      </Box>
-    </Flex>
+        <div className='p-6'>{children}</div>
+      </div>
+    </div>
   );
 }

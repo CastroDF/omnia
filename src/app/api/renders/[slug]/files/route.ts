@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     // Check authentication

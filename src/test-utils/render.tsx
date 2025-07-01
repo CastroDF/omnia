@@ -1,15 +1,12 @@
 import React from 'react';
-import { render as rtlRender } from '@testing-library/react';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { render } from '@testing-library/react';
 
-export function render(ui: React.ReactNode) {
-  return rtlRender(<>{ui}</>, {
-    wrapper: (props: React.PropsWithChildren) => (
-      <ChakraProvider value={defaultSystem}>{props.children}</ChakraProvider>
-    ),
-  });
-}
+const AllTheProviders = (props: { children: React.ReactNode }) => {
+  return <div>{props.children}</div>;
+};
 
-// Re-export everything from testing library
+const customRender = (ui: React.ReactElement, options = {}) =>
+  render(ui, { wrapper: AllTheProviders, ...options });
+
 export * from '@testing-library/react';
-export { userEvent } from '@testing-library/user-event';
+export { customRender as render };

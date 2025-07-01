@@ -1,10 +1,13 @@
 import { MongoClient, Db } from 'mongodb';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
+if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
+  throw new Error(
+    'Invalid/Missing environment variables: "MONGODB_USERNAME" and "MONGODB_PASSWORD" are required',
+  );
 }
 
-const uri = process.env.MONGODB_URI;
+// Construct MongoDB URI from username and password
+const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@omnia-cluster.dnwcklu.mongodb.net/?retryWrites=true&w=majority&appName=omnia-cluster`;
 const options = {};
 
 let client: MongoClient;

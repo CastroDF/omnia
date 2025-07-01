@@ -1,14 +1,14 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { Button } from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
 
 const AuthButton: React.FC = () => {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
     return (
-      <Button loading colorScheme='teal'>
+      <Button disabled className='bg-teal-600 hover:bg-teal-700'>
         Loading...
       </Button>
     );
@@ -16,14 +16,17 @@ const AuthButton: React.FC = () => {
 
   if (session) {
     return (
-      <Button colorScheme='red' onClick={() => signOut()}>
+      <Button variant='destructive' onClick={() => signOut()}>
         Logout ({session.user?.name})
       </Button>
     );
   }
 
   return (
-    <Button colorScheme='teal' onClick={() => signIn('google')}>
+    <Button
+      className='bg-teal-600 hover:bg-teal-700'
+      onClick={() => signIn('google')}
+    >
       Login with Google
     </Button>
   );

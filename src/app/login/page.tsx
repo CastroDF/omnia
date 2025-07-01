@@ -3,16 +3,8 @@
 import { useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import {
-  Container,
-  Heading,
-  Text,
-  Button,
-  Stack,
-  Card,
-  Spinner,
-  Center,
-} from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -26,45 +18,44 @@ export default function LoginPage() {
 
   if (status === 'loading') {
     return (
-      <Center h='100vh'>
-        <Spinner size='xl' color='teal.500' />
-      </Center>
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500'></div>
+      </div>
     );
   }
 
   if (session) {
     return (
-      <Center h='100vh'>
-        <Spinner size='xl' color='teal.500' />
-      </Center>
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500'></div>
+      </div>
     );
   }
 
   return (
-    <Container maxW='md' centerContent py={20}>
-      <Card.Root>
-        <Card.Body>
-          <Stack gap={6} p={8} direction='column' align='center'>
-            <Heading size='xl' textAlign='center' color='teal.500'>
+    <div className='container max-w-md mx-auto px-4 py-20 flex flex-col items-center'>
+      <Card className='w-full'>
+        <CardContent className='p-8'>
+          <div className='flex flex-col items-center space-y-6'>
+            <h1 className='text-3xl font-bold text-center text-teal-500'>
               Omnia
-            </Heading>
-            <Text fontSize='lg' textAlign='center' color='gray.600'>
+            </h1>
+            <p className='text-lg text-center text-gray-600'>
               Plataforma de hosting 3D con integración AR
-            </Text>
-            <Text textAlign='center' color='gray.500'>
+            </p>
+            <p className='text-center text-gray-500'>
               Inicia sesión para acceder a tu dashboard
-            </Text>
+            </p>
             <Button
-              colorScheme='teal'
               size='lg'
-              width='full'
+              className='w-full bg-teal-600 hover:bg-teal-700'
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
             >
               Continuar con Google
             </Button>
-          </Stack>
-        </Card.Body>
-      </Card.Root>
-    </Container>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

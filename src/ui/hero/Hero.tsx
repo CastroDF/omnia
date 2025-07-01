@@ -1,18 +1,8 @@
-import {
-  Box,
-  Container,
-  Stack,
-  VStack,
-  HStack,
-  Heading,
-  Text,
-  Badge,
-  Button,
-  BoxProps,
-} from '@chakra-ui/react';
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-export interface HeroProps extends BoxProps {
+export interface HeroProps {
   title: string;
   subtitle: string;
   badge?: string;
@@ -27,6 +17,7 @@ export interface HeroProps extends BoxProps {
   stats?: string;
   bgGradient?: string;
   color?: string;
+  className?: string;
 }
 
 export const Hero: React.FC<HeroProps> = ({
@@ -36,48 +27,42 @@ export const Hero: React.FC<HeroProps> = ({
   primaryCta,
   secondaryCta,
   stats,
-  bgGradient = 'linear(to-br, blue.600, purple.700)',
-  color = 'white',
+  bgGradient = 'bg-gradient-to-br from-blue-600 to-purple-700',
+  color = 'text-white',
+  className,
   ...props
 }) => {
   return (
-    <Box bgGradient={bgGradient} color={color} py={20} {...props}>
-      <Container maxW='7xl'>
-        <Stack gap={8} align='center' textAlign='center'>
+    <div className={cn('py-20', bgGradient, color, className)} {...props}>
+      <div className='container max-w-7xl mx-auto px-4'>
+        <div className='flex flex-col items-center text-center space-y-8'>
           {badge && (
-            <Badge
-              colorScheme='whiteAlpha'
-              px={4}
-              py={2}
-              borderRadius='full'
-              fontSize='sm'
-            >
+            <span className='inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm text-white'>
               {badge}
-            </Badge>
+            </span>
           )}
 
-          <VStack gap={4} maxW='4xl'>
-            <Heading size='4xl' fontWeight='bold' lineHeight='shorter'>
+          <div className='space-y-4 max-w-4xl'>
+            <h1 className='text-4xl md:text-6xl font-bold leading-tight'>
               {title}
-            </Heading>
+            </h1>
 
-            <Text
-              fontSize='xl'
-              color={color === 'white' ? 'blue.100' : 'gray.600'}
-              maxW='3xl'
+            <p
+              className={cn(
+                'text-xl max-w-3xl',
+                color === 'text-white' ? 'text-blue-100' : 'text-gray-600',
+              )}
             >
               {subtitle}
-            </Text>
-          </VStack>
+            </p>
+          </div>
 
           {(primaryCta || secondaryCta) && (
-            <HStack gap={4} flexWrap='wrap' justify='center'>
+            <div className='flex flex-wrap justify-center gap-4'>
               {primaryCta && (
                 <Button
                   size='lg'
-                  colorScheme='yellow'
-                  color='black'
-                  fontWeight='bold'
+                  className='bg-yellow-500 hover:bg-yellow-400 text-black font-bold'
                   onClick={primaryCta.onClick}
                 >
                   {primaryCta.text}
@@ -88,29 +73,32 @@ export const Hero: React.FC<HeroProps> = ({
                 <Button
                   size='lg'
                   variant='outline'
-                  borderColor={color}
-                  color={color}
-                  _hover={{
-                    bg: color === 'white' ? 'whiteAlpha.200' : 'gray.100',
-                  }}
+                  className={cn(
+                    'border-2 font-semibold',
+                    color === 'text-white'
+                      ? 'border-white text-white hover:bg-white/20'
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-100',
+                  )}
                   onClick={secondaryCta.onClick}
                 >
                   {secondaryCta.text}
                 </Button>
               )}
-            </HStack>
+            </div>
           )}
 
           {stats && (
-            <Text
-              fontSize='sm'
-              color={color === 'white' ? 'blue.200' : 'gray.500'}
+            <p
+              className={cn(
+                'text-sm',
+                color === 'text-white' ? 'text-blue-200' : 'text-gray-500',
+              )}
             >
               {stats}
-            </Text>
+            </p>
           )}
-        </Stack>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };

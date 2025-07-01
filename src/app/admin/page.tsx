@@ -3,11 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Box, Flex, VStack, Text, Heading, Badge } from '@chakra-ui/react';
-import { Avatar } from '@chakra-ui/react';
-import { Button } from '@/ui/button/Button';
-import { Table, TableColumn, TableData } from '@/ui/table/Table';
-import { Card } from '@/ui/card/Card';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   FiUsers,
   FiShield,
@@ -111,234 +109,229 @@ export default function AdminPage() {
     });
   };
 
-  const columns = [
-    {
-      key: 'user',
-      header: 'Usuario',
-      width: '2fr',
-      render: (_value: unknown, user: User) => (
-        <Flex align='center' gap={3}>
-          <Avatar.Root size='sm' bg='teal.500'>
-            <Avatar.Fallback>{user.name?.charAt(0)}</Avatar.Fallback>
-            {user.image && <Avatar.Image src={user.image} />}
-          </Avatar.Root>
-          <Box>
-            <Text color='white' fontWeight='semibold' fontSize='sm'>
-              {user.name}
-            </Text>
-            <Text color='gray.400' fontSize='xs'>
-              {user.email}
-            </Text>
-          </Box>
-        </Flex>
-      ),
-    },
-    {
-      key: 'role',
-      header: 'Rol',
-      width: '150px',
-      render: (_value: unknown, user: User) => (
-        <Badge
-          colorPalette={user.role === 'admin' ? 'red' : 'blue'}
-          size='sm'
-          display='flex'
-          alignItems='center'
-          gap={1}
-          w='fit-content'
-        >
-          {user.role === 'admin' ? <FiStar size={12} /> : <FiUser size={12} />}
-          {user.role === 'admin' ? 'Administrador' : 'Usuario'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'active',
-      header: 'Estado',
-      width: '120px',
-      render: (_value: unknown, user: User) => (
-        <Badge
-          colorPalette={user.active ? 'green' : 'gray'}
-          size='sm'
-          display='flex'
-          alignItems='center'
-          gap={1}
-          w='fit-content'
-        >
-          {user.active ? <FiUserCheck size={12} /> : <FiUserX size={12} />}
-          {user.active ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'actions',
-      header: 'Acciones',
-      width: '200px',
-      render: (_value: unknown, user: User) => (
-        <Flex gap={2}>
-          <Button
-            size='sm'
-            variant={user.active ? 'outline' : 'primary'}
-            leftIcon={user.active ? <FiToggleRight /> : <FiToggleLeft />}
-            onClick={() => toggleUserActive(user)}
-            loading={updating === user._id}
-            disabled={updating === user._id}
-          >
-            {user.active ? 'Desactivar' : 'Activar'}
-          </Button>
-
-          {user._id !== session?.user?.id && (
-            <Button
-              size='sm'
-              variant={user.role === 'admin' ? 'secondary' : 'outline'}
-              leftIcon={user.role === 'admin' ? <FiUser /> : <FiStar />}
-              onClick={() => toggleUserRole(user)}
-              loading={updating === user._id}
-              disabled={updating === user._id}
-            >
-              {user.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
-            </Button>
-          )}
-        </Flex>
-      ),
-    },
-  ];
-
-  if (session?.user?.role !== 'admin') {
+  if (loading) {
     return (
-      <Box
-        minH='100vh'
-        bg='gray.900'
-        display='flex'
-        alignItems='center'
-        justifyContent='center'
-      >
-        <Card.Root bg='red.900' borderColor='red.700' maxW='md'>
-          <Card.Body textAlign='center'>
-            <FiShield size={48} color='red' />
-            <Heading size='lg' color='red.300' mt={4}>
-              Acceso Denegado
-            </Heading>
-            <Text color='red.200' mt={2}>
-              No tienes permisos para acceder a esta página.
-            </Text>
-            <Button mt={4} variant='outline' onClick={() => router.push('/')}>
-              Volver al Inicio
-            </Button>
-          </Card.Body>
-        </Card.Root>
-      </Box>
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
+      </div>
     );
   }
 
   return (
-    <Box minH='100vh' bg='gray.900'>
-      {/* Header */}
-      <Box bg='gray.800' borderBottom='1px' borderColor='gray.700' py={6}>
-        <Box maxW='7xl' mx='auto' px={6}>
-          <Flex align='center' justify='space-between'>
-            <Box>
-              <Flex align='center' gap={3}>
-                <Box p={3} bg='red.800' borderRadius='full'>
-                  <FiShield size={24} color='white' />
-                </Box>
-                <Box>
-                  <Heading size='xl' color='white'>
-                    Panel de Administración
-                  </Heading>
-                  <Text color='gray.400' mt={1}>
-                    Gestión de usuarios y permisos del sistema
-                  </Text>
-                </Box>
-              </Flex>
-            </Box>
+    <div className='min-h-screen bg-gray-900 text-white p-8'>
+      <div className='container max-w-7xl mx-auto'>
+        <div className='space-y-8'>
+          {/* Header */}
+          <div className='flex items-center justify-between'>
+            <div>
+              <h1 className='text-3xl font-bold text-white'>
+                Panel de Administración
+              </h1>
+              <p className='text-gray-400 mt-2'>
+                Gestiona usuarios y permisos del sistema
+              </p>
+            </div>
+            <div className='flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg'>
+              <FiShield className='text-red-400' />
+              <span className='text-red-400 font-medium'>Administrador</span>
+            </div>
+          </div>
 
-            <Button variant='outline' onClick={() => router.push('/dashboard')}>
-              Volver al Dashboard
-            </Button>
-          </Flex>
-        </Box>
-      </Box>
-
-      {/* Main content */}
-      <Box maxW='7xl' mx='auto' p={6}>
-        <VStack gap={6} align='start'>
           {/* Stats */}
-          <Flex gap={4} w='full'>
-            <Card.Root bg='gray.800' borderColor='gray.700' flex={1}>
-              <Card.Body>
-                <Flex align='center' gap={3}>
-                  <Box p={2} bg='blue.800' borderRadius='lg'>
-                    <FiUsers size={20} color='white' />
-                  </Box>
-                  <Box>
-                    <Text color='white' fontWeight='semibold' fontSize='lg'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+            <Card className='bg-gray-800 border-gray-700'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-gray-400 font-medium'>Total Usuarios</p>
+                    <p className='text-2xl font-bold text-white'>
                       {users.length}
-                    </Text>
-                    <Text color='gray.400' fontSize='sm'>
-                      Total de Usuarios
-                    </Text>
-                  </Box>
-                </Flex>
-              </Card.Body>
-            </Card.Root>
+                    </p>
+                  </div>
+                  <div className='p-3 bg-blue-500/20 rounded-lg'>
+                    <FiUsers className='text-blue-400 text-xl' />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            <Card.Root bg='gray.800' borderColor='gray.700' flex={1}>
-              <Card.Body>
-                <Flex align='center' gap={3}>
-                  <Box p={2} bg='green.800' borderRadius='lg'>
-                    <FiUserCheck size={20} color='white' />
-                  </Box>
-                  <Box>
-                    <Text color='white' fontWeight='semibold' fontSize='lg'>
-                      {users.filter(u => u.active).length}
-                    </Text>
-                    <Text color='gray.400' fontSize='sm'>
+            <Card className='bg-gray-800 border-gray-700'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-gray-400 font-medium'>
                       Usuarios Activos
-                    </Text>
-                  </Box>
-                </Flex>
-              </Card.Body>
-            </Card.Root>
+                    </p>
+                    <p className='text-2xl font-bold text-white'>
+                      {users.filter(u => u.active).length}
+                    </p>
+                  </div>
+                  <div className='p-3 bg-green-500/20 rounded-lg'>
+                    <FiUserCheck className='text-green-400 text-xl' />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            <Card.Root bg='gray.800' borderColor='gray.700' flex={1}>
-              <Card.Body>
-                <Flex align='center' gap={3}>
-                  <Box p={2} bg='red.800' borderRadius='lg'>
-                    <FiStar size={20} color='white' />
-                  </Box>
-                  <Box>
-                    <Text color='white' fontWeight='semibold' fontSize='lg'>
+            <Card className='bg-gray-800 border-gray-700'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-gray-400 font-medium'>Administradores</p>
+                    <p className='text-2xl font-bold text-white'>
                       {users.filter(u => u.role === 'admin').length}
-                    </Text>
-                    <Text color='gray.400' fontSize='sm'>
-                      Administradores
-                    </Text>
-                  </Box>
-                </Flex>
-              </Card.Body>
-            </Card.Root>
-          </Flex>
+                    </p>
+                  </div>
+                  <div className='p-3 bg-red-500/20 rounded-lg'>
+                    <FiStar className='text-red-400 text-xl' />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          {/* Users table */}
-          <Box w='full'>
-            <Box mb={4}>
-              <Heading size='lg' color='white' mb={2}>
-                Gestión de Usuarios
-              </Heading>
-              <Text color='gray.400'>
-                Administra los roles y estados de los usuarios del sistema
-              </Text>
-            </Box>
+          {/* Users Table */}
+          <Card className='bg-gray-800 border-gray-700'>
+            <CardContent className='p-0'>
+              <div className='p-6 border-b border-gray-700'>
+                <h2 className='text-xl font-bold text-white'>
+                  Gestión de Usuarios
+                </h2>
+              </div>
 
-            <Table
-              columns={columns as unknown as TableColumn[]}
-              data={users as unknown as TableData[]}
-              loading={loading}
-              emptyMessage='No hay usuarios registrados'
-            />
-          </Box>
-        </VStack>
-      </Box>
-    </Box>
+              <div className='overflow-x-auto'>
+                <table className='w-full'>
+                  <thead>
+                    <tr className='border-b border-gray-700'>
+                      <th className='text-left p-4 text-gray-300 font-medium'>
+                        Usuario
+                      </th>
+                      <th className='text-left p-4 text-gray-300 font-medium'>
+                        Rol
+                      </th>
+                      <th className='text-left p-4 text-gray-300 font-medium'>
+                        Estado
+                      </th>
+                      <th className='text-left p-4 text-gray-300 font-medium'>
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map(user => (
+                      <tr
+                        key={user._id}
+                        className='border-b border-gray-700 hover:bg-gray-750'
+                      >
+                        <td className='p-4'>
+                          <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold'>
+                              {user.image ? (
+                                <Image
+                                  src={user.image}
+                                  alt={user.name}
+                                  className='w-full h-full rounded-full'
+                                  width={40}
+                                  height={40}
+                                />
+                              ) : (
+                                user.name?.charAt(0)
+                              )}
+                            </div>
+                            <div>
+                              <p className='text-white font-semibold text-sm'>
+                                {user.name}
+                              </p>
+                              <p className='text-gray-400 text-xs'>
+                                {user.email}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className='p-4'>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                              user.role === 'admin'
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-blue-500/20 text-blue-400'
+                            }`}
+                          >
+                            {user.role === 'admin' ? (
+                              <FiStar size={12} />
+                            ) : (
+                              <FiUser size={12} />
+                            )}
+                            {user.role === 'admin'
+                              ? 'Administrador'
+                              : 'Usuario'}
+                          </span>
+                        </td>
+                        <td className='p-4'>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                              user.active
+                                ? 'bg-green-500/20 text-green-400'
+                                : 'bg-gray-500/20 text-gray-400'
+                            }`}
+                          >
+                            {user.active ? (
+                              <FiUserCheck size={12} />
+                            ) : (
+                              <FiUserX size={12} />
+                            )}
+                            {user.active ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </td>
+                        <td className='p-4'>
+                          <div className='flex gap-2'>
+                            <Button
+                              size='sm'
+                              variant={user.active ? 'outline' : 'default'}
+                              onClick={() => toggleUserActive(user)}
+                              disabled={updating === user._id}
+                              className='text-xs'
+                            >
+                              {user.active ? (
+                                <FiToggleRight className='mr-1' />
+                              ) : (
+                                <FiToggleLeft className='mr-1' />
+                              )}
+                              {user.active ? 'Desactivar' : 'Activar'}
+                            </Button>
+
+                            {user._id !== session?.user?.id && (
+                              <Button
+                                size='sm'
+                                variant={
+                                  user.role === 'admin'
+                                    ? 'secondary'
+                                    : 'outline'
+                                }
+                                onClick={() => toggleUserRole(user)}
+                                disabled={updating === user._id}
+                                className='text-xs'
+                              >
+                                {user.role === 'admin' ? (
+                                  <FiUser className='mr-1' />
+                                ) : (
+                                  <FiStar className='mr-1' />
+                                )}
+                                {user.role === 'admin'
+                                  ? 'Quitar Admin'
+                                  : 'Hacer Admin'}
+                              </Button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

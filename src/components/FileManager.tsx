@@ -1,23 +1,11 @@
 'use client';
 
-import {
-  Box,
-  Flex,
-  VStack,
-  HStack,
-  Text,
-  Heading,
-  Input,
-  InputElement,
-  SimpleGrid,
-  Image,
-  IconButton,
-  Avatar,
-  Badge,
-} from '@chakra-ui/react';
-import { Button } from '@/ui/button/Button';
-import { Card } from '@/ui/card/Card';
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import {
   FiSearch,
   FiPlus,
@@ -25,7 +13,6 @@ import {
   FiFolder,
   FiVideo,
   FiGrid,
-  FiBell,
   FiLayout,
   FiPieChart,
   FiStar,
@@ -40,58 +27,46 @@ interface NavItemProps {
   onClick?: () => void;
 }
 
-function NavItem({ icon, children, active, onClick }: NavItemProps) {
+const NavItem = ({ icon, children, active, onClick }: NavItemProps) => {
   return (
-    <Flex
-      align='center'
-      gap={3}
-      px={3}
-      py={2}
-      borderRadius='lg'
-      bg={active ? 'gray.100' : 'transparent'}
-      _hover={{ bg: 'gray.50' }}
-      cursor='pointer'
+    <div
+      className={cn(
+        'flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200',
+        active
+          ? 'bg-gray-100 text-gray-900'
+          : 'bg-transparent text-gray-700 hover:bg-gray-50',
+      )}
       onClick={onClick}
-      transition='all 0.2s'
     >
       {icon}
-      <Text fontSize='sm' fontWeight={active ? 'semibold' : 'normal'}>
+      <span className={cn('text-sm', active ? 'font-semibold' : 'font-normal')}>
         {children}
-      </Text>
-    </Flex>
+      </span>
+    </div>
   );
-}
+};
 
-function FolderItem({
+const FolderItem = ({
   children,
   count,
 }: {
   children: React.ReactNode;
   count?: number;
-}) {
+}) => {
   return (
-    <Flex
-      align='center'
-      justify='space-between'
-      px={3}
-      py={2}
-      borderRadius='md'
-      _hover={{ bg: 'gray.50' }}
-      cursor='pointer'
-      transition='all 0.2s'
-    >
-      <Flex align='center' gap={2}>
-        <FiFolder size={16} color='gray' />
-        <Text fontSize='sm'>{children}</Text>
-      </Flex>
+    <div className='flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-50 cursor-pointer transition-all duration-200'>
+      <div className='flex items-center gap-2'>
+        <FiFolder size={16} className='text-gray-500' />
+        <span className='text-sm text-gray-700'>{children}</span>
+      </div>
       {count && (
-        <Badge colorPalette='gray' size='sm' borderRadius='full'>
+        <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
           {count}
-        </Badge>
+        </span>
       )}
-    </Flex>
+    </div>
   );
-}
+};
 
 interface FileCardProps {
   title: string;
@@ -102,69 +77,55 @@ interface FileCardProps {
   isFolder?: boolean;
 }
 
-function FileCard({
+const FileCard = ({
   title,
   type,
   size,
   date,
   thumbnail,
   isFolder,
-}: FileCardProps) {
+}: FileCardProps) => {
   return (
-    <Card.Root
-      cursor='pointer'
-      transition='all 0.2s'
-      _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-    >
-      <Box
-        position='relative'
-        aspectRatio='4/3'
-        overflow='hidden'
-        borderTopRadius='xl'
-      >
+    <Card className='cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg group'>
+      <div className='relative aspect-[4/3] overflow-hidden rounded-t-xl'>
         {thumbnail ? (
           <Image
             src={thumbnail}
             alt={title}
-            w='100%'
-            h='100%'
-            objectFit='cover'
-            transition='transform 0.2s'
-            _groupHover={{ transform: 'scale(1.05)' }}
+            width={400}
+            height={300}
+            className='w-full h-full object-cover transition-transform duration-200 group-hover:scale-105'
           />
         ) : (
-          <Flex
-            w='100%'
-            h='100%'
-            bg={isFolder ? 'blue.50' : 'gray.50'}
-            align='center'
-            justify='center'
+          <div
+            className={cn(
+              'w-full h-full flex items-center justify-center',
+              isFolder ? 'bg-blue-50' : 'bg-gray-50',
+            )}
           >
             {isFolder ? (
-              <FiFolder size={48} color='blue' />
+              <FiFolder size={48} className='text-blue-500' />
             ) : (
-              <FiVideo size={48} color='gray' />
+              <FiVideo size={48} className='text-gray-400' />
             )}
-          </Flex>
+          </div>
         )}
-      </Box>
+      </div>
 
-      <Card.Body>
-        <VStack align='start' gap={1}>
-          <Text fontWeight='semibold' fontSize='sm' lineClamp={1}>
+      <CardContent className='p-4'>
+        <div className='space-y-1'>
+          <h3 className='font-semibold text-sm text-gray-900 line-clamp-1'>
             {title}
-          </Text>
-          <Text fontSize='xs' color='gray.500'>
+          </h3>
+          <p className='text-xs text-gray-500'>
             {type} • {size}
-          </Text>
-          <Text fontSize='xs' color='gray.400'>
-            {date}
-          </Text>
-        </VStack>
-      </Card.Body>
-    </Card.Root>
+          </p>
+          <p className='text-xs text-gray-400'>{date}</p>
+        </div>
+      </CardContent>
+    </Card>
   );
-}
+};
 
 export default function FileManager() {
   const sampleFiles = [
@@ -198,196 +159,129 @@ export default function FileManager() {
     },
     {
       title: 'Architecture Plans',
-      type: 'CAD File',
+      type: 'Documents',
       size: '8.3 MB',
       date: '1 week ago',
       isFolder: false,
     },
     {
-      title: 'Marketing Materials',
+      title: 'Marketing Assets',
       type: 'Folder',
-      size: '23 items',
+      size: '24 items',
       date: '2 weeks ago',
       isFolder: true,
     },
   ];
 
-  const [activeTab, setActiveTab] = React.useState('recent');
-
   return (
-    <Flex h='100vh' bg='gray.50'>
+    <div className='flex h-screen bg-white'>
       {/* Sidebar */}
-      <Box w='280px' bg='white' borderRight='1px' borderColor='gray.200'>
-        <Box p={6}>
-          <Heading size='lg' color='teal.500'>
-            Omnia Files
-          </Heading>
-        </Box>
-
-        <VStack align='stretch' gap={1} px={4}>
-          <NavItem icon={<FiLayout />} active>
-            All Content
-          </NavItem>
-          <NavItem icon={<FiVideo />}>3D Renders</NavItem>
-          <NavItem icon={<FiPieChart />}>Analytics</NavItem>
-
-          <Box py={4}>
-            <Text
-              fontSize='xs'
-              fontWeight='bold'
-              color='gray.500'
-              px={3}
-              mb={2}
-            >
-              COLLECTIONS
-            </Text>
-            <VStack align='stretch' gap={1}>
-              <FolderItem count={8}>Product Renders</FolderItem>
-              <FolderItem count={5}>Architecture</FolderItem>
-              <FolderItem count={12}>Interior Design</FolderItem>
-              <FolderItem count={3}>Presentations</FolderItem>
-            </VStack>
-          </Box>
-        </VStack>
-      </Box>
-
-      {/* Main content */}
-      <Box flex={1}>
-        {/* Header */}
-        <Flex
-          bg='white'
-          borderBottom='1px'
-          borderColor='gray.200'
-          px={6}
-          py={4}
-          align='center'
-          justify='space-between'
-        >
-          <Box w='400px' position='relative'>
-            <InputElement
-              pointerEvents='none'
-              position='absolute'
-              left={3}
-              top='50%'
-              transform='translateY(-50%)'
-            >
-              <FiSearch color='gray' />
-            </InputElement>
+      <div className='w-64 bg-gray-50 border-r border-gray-200 p-4'>
+        <div className='space-y-6'>
+          {/* Search */}
+          <div className='relative'>
+            <FiSearch className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
             <Input
               type='search'
-              placeholder='Search files and folders...'
-              bg='gray.50'
-              border='none'
-              pl={10}
+              placeholder='Buscar archivos...'
+              className='pl-10'
             />
-          </Box>
+          </div>
 
-          <HStack gap={3}>
-            <IconButton aria-label='Grid view' variant='ghost' size='sm'>
-              <FiGrid />
-            </IconButton>
-            <IconButton aria-label='Notifications' variant='ghost' size='sm'>
-              <FiBell />
-            </IconButton>
-            <Avatar.Root size='sm'>
-              <Avatar.Fallback>U</Avatar.Fallback>
-            </Avatar.Root>
-          </HStack>
-        </Flex>
+          {/* Upload Button */}
+          <Button className='w-full justify-start gap-3'>
+            <FiUpload size={16} />
+            Subir Archivo
+          </Button>
 
-        {/* Content */}
-        <Box p={6}>
-          {/* Action buttons */}
-          <HStack gap={3} mb={6}>
-            <Button leftIcon={<FiPlus />} variant='primary' size='md'>
-              Create
-            </Button>
-            <Button leftIcon={<FiUpload />} variant='outline' size='md'>
-              Upload
-            </Button>
-            <Button leftIcon={<FiFolder />} variant='outline' size='md'>
-              New Folder
-            </Button>
-            <Button leftIcon={<FiVideo />} variant='outline' size='md'>
-              New Render
-            </Button>
-          </HStack>
+          {/* Navigation */}
+          <div className='space-y-1'>
+            <NavItem icon={<FiGrid size={16} />} active>
+              Todos los archivos
+            </NavItem>
+            <NavItem icon={<FiClock size={16} />}>Recientes</NavItem>
+            <NavItem icon={<FiStar size={16} />}>Favoritos</NavItem>
+            <NavItem icon={<FiShare2 size={16} />}>Compartidos</NavItem>
+          </div>
 
-          {/* Simple tabs implementation */}
-          <Box mb={6}>
-            <HStack gap={6} borderBottom='1px' borderColor='gray.200' pb={3}>
-              <Flex
-                align='center'
-                gap={2}
-                cursor='pointer'
-                color={activeTab === 'recent' ? 'teal.500' : 'gray.600'}
-                borderBottom={activeTab === 'recent' ? '2px solid' : 'none'}
-                borderColor='teal.500'
-                pb={3}
-                onClick={() => setActiveTab('recent')}
-              >
-                <FiClock />
-                <Text
-                  fontWeight={activeTab === 'recent' ? 'semibold' : 'normal'}
-                >
-                  Recent
-                </Text>
-              </Flex>
-              <Flex
-                align='center'
-                gap={2}
-                cursor='pointer'
-                color={activeTab === 'starred' ? 'teal.500' : 'gray.600'}
-                borderBottom={activeTab === 'starred' ? '2px solid' : 'none'}
-                borderColor='teal.500'
-                pb={3}
-                onClick={() => setActiveTab('starred')}
-              >
-                <FiStar />
-                <Text
-                  fontWeight={activeTab === 'starred' ? 'semibold' : 'normal'}
-                >
-                  Starred
-                </Text>
-              </Flex>
-              <Flex
-                align='center'
-                gap={2}
-                cursor='pointer'
-                color={activeTab === 'shared' ? 'teal.500' : 'gray.600'}
-                borderBottom={activeTab === 'shared' ? '2px solid' : 'none'}
-                borderColor='teal.500'
-                pb={3}
-                onClick={() => setActiveTab('shared')}
-              >
-                <FiShare2 />
-                <Text
-                  fontWeight={activeTab === 'shared' ? 'semibold' : 'normal'}
-                >
-                  Shared
-                </Text>
-              </Flex>
-            </HStack>
-          </Box>
+          {/* Folders */}
+          <div className='space-y-2'>
+            <h3 className='text-xs font-semibold text-gray-500 uppercase tracking-wider'>
+              Carpetas
+            </h3>
+            <div className='space-y-1'>
+              <FolderItem count={12}>Proyectos</FolderItem>
+              <FolderItem count={8}>Clientes</FolderItem>
+              <FolderItem count={5}>Recursos</FolderItem>
+              <FolderItem count={3}>Plantillas</FolderItem>
+            </div>
+          </div>
 
-          {/* Tab content */}
-          {activeTab === 'recent' && (
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap={6}>
-              {sampleFiles.map((file, index) => (
-                <FileCard key={index} {...file} />
-              ))}
-            </SimpleGrid>
-          )}
+          {/* Storage */}
+          <div className='space-y-3'>
+            <h3 className='text-xs font-semibold text-gray-500 uppercase tracking-wider'>
+              Almacenamiento
+            </h3>
+            <div className='space-y-2'>
+              <div className='w-full bg-gray-200 rounded-full h-2'>
+                <div
+                  className='bg-teal-600 h-2 rounded-full'
+                  style={{ width: '65%' }}
+                ></div>
+              </div>
+              <p className='text-xs text-gray-500'>6.5 GB de 10 GB usados</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {activeTab === 'starred' && (
-            <Text color='gray.500'>No starred files yet.</Text>
-          )}
+      {/* Main Content */}
+      <div className='flex-1 flex flex-col'>
+        {/* Header */}
+        <div className='bg-white border-b border-gray-200 p-6'>
+          <div className='flex items-center justify-between'>
+            <div>
+              <h1 className='text-2xl font-bold text-gray-900'>
+                Gestor de Archivos
+              </h1>
+              <p className='text-gray-600 mt-1'>
+                Administra y organiza todos tus archivos
+              </p>
+            </div>
 
-          {activeTab === 'shared' && (
-            <Text color='gray.500'>No shared files yet.</Text>
-          )}
-        </Box>
-      </Box>
-    </Flex>
+            <div className='flex items-center gap-3'>
+              <Button variant='outline' size='sm'>
+                <FiLayout size={16} className='mr-2' />
+                Vista Lista
+              </Button>
+              <Button variant='outline' size='sm'>
+                <FiPieChart size={16} className='mr-2' />
+                Estadísticas
+              </Button>
+              <Button size='sm'>
+                <FiPlus size={16} className='mr-2' />
+                Nuevo
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* File Grid */}
+        <div className='flex-1 p-6 overflow-auto'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4'>
+            {sampleFiles.map((file, index) => (
+              <FileCard
+                key={index}
+                title={file.title}
+                type={file.type}
+                size={file.size}
+                date={file.date}
+                isFolder={file.isFolder}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

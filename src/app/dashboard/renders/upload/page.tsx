@@ -1,9 +1,8 @@
 'use client';
 
-import { Box, VStack, Text, Flex } from '@chakra-ui/react';
 import SidebarLayout from '@/components/layouts/SidebarLayout';
 import UploadRenderForm from '@/components/UploadRenderForm';
-import { Button } from '@/ui/button/Button';
+import { Button } from '@/components/ui/button';
 import {
   FiBox,
   FiSmartphone,
@@ -18,76 +17,57 @@ export default function UploadPage() {
 
   // Sidebar content for upload page
   const sidebarContent = (
-    <VStack gap={4} align='start'>
+    <div className='space-y-4'>
       {/* Back to renders */}
       <Button
         variant='ghost'
-        leftIcon={<FiArrowLeft />}
         onClick={() => router.push('/dashboard/renders')}
-        w='full'
-        justifyContent='flex-start'
+        className='w-full justify-start'
       >
+        <FiArrowLeft className='mr-2' />
         Volver a Mis Renders
       </Button>
 
       {/* Upload info */}
-      <Box
-        p={4}
-        bg='teal.900'
-        borderRadius='lg'
-        border='1px'
-        borderColor='teal.700'
-      >
-        <Flex align='center' gap={2} mb={3}>
-          <FiInfo color='teal' />
-          <Text fontWeight='semibold' color='teal.300' fontSize='sm'>
+      <div className='p-4 bg-teal-900 rounded-lg border border-teal-700'>
+        <div className='flex items-center gap-2 mb-3'>
+          <FiInfo className='text-teal-400' />
+          <span className='font-semibold text-teal-300 text-sm'>
             Información AR
-          </Text>
-        </Flex>
-        <VStack align='start' gap={2} fontSize='xs'>
-          <Flex align='center' gap={2}>
-            <FiSmartphone color='teal' size={14} />
-            <Text color='teal.100'>
-              <Text as='span' fontWeight='semibold'>
-                iOS:
-              </Text>{' '}
-              Archivo .usdz
-            </Text>
-          </Flex>
-          <Flex align='center' gap={2}>
-            <FiTablet color='teal' size={14} />
-            <Text color='teal.100'>
-              <Text as='span' fontWeight='semibold'>
-                Android:
-              </Text>{' '}
-              Archivo .glb
-            </Text>
-          </Flex>
-          <Text color='green.300' fontSize='xs' mt={2}>
+          </span>
+        </div>
+        <div className='space-y-2 text-xs'>
+          <div className='flex items-center gap-2'>
+            <FiSmartphone className='text-teal-400' size={14} />
+            <span className='text-teal-100'>
+              <span className='font-semibold'>iOS:</span> Archivo .usdz
+            </span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <FiTablet className='text-teal-400' size={14} />
+            <span className='text-teal-100'>
+              <span className='font-semibold'>Android:</span> Archivo .glb
+            </span>
+          </div>
+          <p className='text-green-300 text-xs mt-2'>
             💡 Sube ambos para máxima compatibilidad
-          </Text>
-        </VStack>
-      </Box>
+          </p>
+        </div>
+      </div>
 
       {/* Quick tips */}
-      <Box
-        p={4}
-        bg='gray.700'
-        borderRadius='lg'
-        border='1px'
-        borderColor='gray.600'
-      >
-        <Text fontWeight='semibold' color='white' fontSize='sm' mb={2}>
+      <div className='p-4 bg-gray-700 rounded-lg border border-gray-600'>
+        <p className='font-semibold text-white text-sm mb-2'>
           📋 Consejos rápidos
-        </Text>
-        <VStack align='start' gap={1} fontSize='xs' color='gray.300'>
-          <Text>• Usa nombres descriptivos</Text>
-          <Text>• Archivos optimizados funcionan mejor</Text>
-          <Text>• Prueba en dispositivos reales</Text>
-          <Text>• Comparte en Instagram Stories</Text>
-        </VStack>
-      </Box>
-    </VStack>
+        </p>
+        <div className='space-y-1 text-xs text-gray-300'>
+          <p>• Usa nombres descriptivos</p>
+          <p>• Archivos optimizados funcionan mejor</p>
+          <p>• Prueba en dispositivos reales</p>
+          <p>• Comparte en Instagram Stories</p>
+        </div>
+      </div>
+    </div>
   );
 
   return (
@@ -99,16 +79,16 @@ export default function UploadPage() {
       headerActions={
         <Button
           variant='outline'
-          leftIcon={<FiBox />}
           onClick={() => router.push('/dashboard/renders')}
         >
+          <FiBox className='mr-2' />
           Ver Mis Modelos
         </Button>
       }
     >
-      <Box maxW='4xl' mx='auto'>
+      <div className='max-w-4xl mx-auto'>
         <UploadRenderForm />
-      </Box>
+      </div>
     </SidebarLayout>
   );
 }

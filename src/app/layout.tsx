@@ -1,7 +1,8 @@
 'use client';
 
-import { Provider } from '@/components/ui/provider';
+import './globals.css';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
 
 export default function RootLayout({
   children,
@@ -9,10 +10,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body>
+    <html lang='en' className='dark' suppressHydrationWarning>
+      <body className='min-h-screen bg-background font-sans antialiased'>
         <SessionProvider>
-          <Provider>{children}</Provider>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='dark'
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

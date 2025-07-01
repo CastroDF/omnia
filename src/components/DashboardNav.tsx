@@ -1,8 +1,8 @@
 'use client';
 
-import { Box, Flex, Heading, Button, Text, Container } from '@chakra-ui/react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardNav() {
   const { data: session } = useSession();
@@ -15,54 +15,47 @@ export default function DashboardNav() {
   };
 
   return (
-    <Box bg='gray.900' borderBottom='1px' borderColor='gray.700' py={4}>
-      <Container maxW='7xl'>
-        <Flex justify='space-between' align='center'>
-          <Heading
-            size='lg'
-            color='teal.400'
-            cursor='pointer'
+    <div className='bg-gray-900 border-b border-gray-700 py-4'>
+      <div className='container mx-auto max-w-7xl px-4'>
+        <div className='flex justify-between items-center'>
+          <h1
+            className='text-xl font-bold text-teal-400 cursor-pointer'
             onClick={() => router.push('/dashboard')}
           >
             Dashboard Omnia
-          </Heading>
+          </h1>
 
-          <Flex align='center' gap={4}>
+          <div className='flex items-center gap-4'>
             <Button
               variant='ghost'
-              color='gray.300'
-              _hover={{ color: 'white', bg: 'gray.700' }}
+              className='text-gray-300 hover:text-white hover:bg-gray-700'
               onClick={() => router.push('/dashboard/renders')}
             >
               Mis Renders
             </Button>
             <Button
-              bg='teal.600'
-              color='white'
-              _hover={{ bg: 'teal.500' }}
+              className='bg-teal-600 hover:bg-teal-500 text-white'
               onClick={() => router.push('/dashboard/renders/upload')}
             >
               Subir Render
             </Button>
 
-            <Flex align='center' gap={2}>
-              <Text fontSize='sm' color='gray.400'>
+            <div className='flex items-center gap-2'>
+              <span className='text-sm text-gray-400'>
                 Hola, {getFirstName(session?.user?.name)} 👋
-              </Text>
+              </span>
               <Button
                 size='sm'
                 variant='outline'
-                color='gray.300'
-                borderColor='gray.600'
-                _hover={{ bg: 'gray.700', color: 'white' }}
+                className='text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'
                 onClick={() => signOut({ callbackUrl: '/' })}
               >
                 Cerrar Sesión
               </Button>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Container>
-    </Box>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

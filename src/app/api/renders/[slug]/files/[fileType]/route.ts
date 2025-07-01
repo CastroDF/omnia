@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string; fileType: string } },
+  { params }: { params: Promise<{ slug: string; fileType: string }> },
 ) {
   try {
     // Check authentication

@@ -1,26 +1,28 @@
-import { Box, Container, BoxProps } from '@chakra-ui/react';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
-export interface SectionProps extends BoxProps {
+export interface SectionProps {
   children: React.ReactNode;
   bg?: string;
-  py?: number | string;
-  px?: number | string;
+  py?: string;
+  px?: string;
   maxW?: string;
+  className?: string;
 }
 
 export const Section: React.FC<SectionProps> = ({
   children,
-  bg = 'transparent',
-  py = 20,
+  bg = 'bg-transparent',
+  py = 'py-20',
   px,
-  maxW = '7xl',
+  maxW = 'max-w-7xl',
+  className,
   ...props
 }) => {
   return (
-    <Box bg={bg} py={py} px={px} {...props}>
-      <Container maxW={maxW}>{children}</Container>
-    </Box>
+    <div className={cn(bg, py, px, className)} {...props}>
+      <div className={cn('container mx-auto px-4', maxW)}>{children}</div>
+    </div>
   );
 };
 

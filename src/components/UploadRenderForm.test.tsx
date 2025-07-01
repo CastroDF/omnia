@@ -155,8 +155,6 @@ describe('UploadRenderForm', () => {
     expect(submitButton).not.toBeDisabled();
 
     // Test that file selection worked
-    expect(
-      screen.getByText('Archivo seleccionado: model.usdz'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('model.usdz')).toBeInTheDocument();
   });
 });
