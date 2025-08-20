@@ -247,14 +247,14 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                     </p>
 
                     {deviceType !== 'desktop' &&
-                      arCapability === 'available' && (
-                        <div className='bg-teal-900/30 border border-teal-600/50 rounded-lg p-3'>
-                          <p className='text-teal-300 text-sm font-medium text-center'>
-                            🎉 ¡Tu dispositivo soporta AR! Toca el botón para
-                            comenzar
-                          </p>
-                        </div>
-                      )}
+                    arCapability === 'available' ? (
+                      <div className='bg-teal-900/30 border border-teal-600/50 rounded-lg p-3'>
+                        <p className='text-teal-300 text-sm font-medium text-center'>
+                          🎉 ¡Tu dispositivo soporta AR! Toca el botón para
+                          comenzar
+                        </p>
+                      </div>
+                    ) : null}
 
                     {deviceType === 'desktop' && (
                       <div className='bg-blue-900/30 border border-blue-600/50 rounded-lg p-4'>
