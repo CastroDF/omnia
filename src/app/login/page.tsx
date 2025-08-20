@@ -14,7 +14,7 @@ export default function LoginPage() {
     if (session) {
       router.push('/dashboard');
     }
-  }, [session]);
+  }, [session, router]);
 
   if (status === 'loading') {
     return (

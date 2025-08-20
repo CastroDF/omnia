@@ -9,7 +9,7 @@ export interface RecentActivity {
   description: string;
   renderSlug?: string;
   timestamp: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UserSession {

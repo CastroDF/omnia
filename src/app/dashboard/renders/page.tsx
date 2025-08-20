@@ -7,12 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
 import React from 'react';
 import { useSidebar } from '@/components/layouts/DashboardWrapper';
-import {
-  useAppStore,
-  trackActivity,
-  useRecentActivities,
-  RecentActivity,
-} from '@/lib/store';
+import { useRecentActivities } from '@/lib/store';
 import {
   FiPlus,
   FiLayout,
@@ -25,10 +20,8 @@ import {
   FiCopy,
   FiEdit3,
   FiX,
-  FiCalendar,
   FiActivity,
   FiTrendingUp,
-  FiUsers,
 } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 
