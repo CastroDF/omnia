@@ -9,6 +9,9 @@ export interface RenderFiles {
   usdz?: FileData; // For iOS AR
   glb?: FileData; // For Android AR
 
+  // Preview image for dashboard display
+  previewImage?: FileData;
+
   // Legacy files (for existing renders)
   obj?: FileData;
   mtl?: FileData;

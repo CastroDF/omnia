@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
     const usdzFile = formData.get('usdzFile') as File | null;
     const glbFile = formData.get('glbFile') as File | null;
 
+    // Preview image for dashboard display
+    const previewImage = formData.get('imageFile') as File | null;
+
     if (!usdzFile && !glbFile) {
       return NextResponse.json(
         {
@@ -39,32 +42,40 @@ export async function POST(request: NextRequest) {
     }
 
     if (!name) {
-      return NextResponse.json(
-        { error: 'Nombre es requerido' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Nombre es requerido' }, { status: 400 });
+    }
+
+    // Validate preview image if provided
+    if (previewImage) {
+      const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!validImageTypes.includes(previewImage.type)) {
+        return NextResponse.json(
+          { error: 'La imagen de vista previa debe ser JPG, PNG o WebP' },
+          { status: 400 },
+        );
+      }
+
+      // Check file size (max 10MB)
+      if (previewImage.size > 10 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: 'La imagen de vista previa no puede exceder 10MB' },
+          { status: 400 },
+        );
+      }
     }
 
     // Validate file types
     const validUsdzTypes = ['model/vnd.usdz+zip', 'application/octet-stream'];
     const validGlbTypes = ['model/gltf-binary', 'application/octet-stream'];
 
-    if (
-      usdzFile &&
-      !validUsdzTypes.includes(usdzFile.type) &&
-      !usdzFile.name.endsWith('.usdz')
-    ) {
+    if (usdzFile && !validUsdzTypes.includes(usdzFile.type) && !usdzFile.name.endsWith('.usdz')) {
       return NextResponse.json(
         { error: 'El archivo USDZ debe tener extensión .usdz' },
         { status: 400 },
       );
     }
 
-    if (
-      glbFile &&
-      !validGlbTypes.includes(glbFile.type) &&
-      !glbFile.name.endsWith('.glb')
-    ) {
+    if (glbFile && !validGlbTypes.includes(glbFile.type) && !glbFile.name.endsWith('.glb')) {
       return NextResponse.json(
         { error: 'El archivo GLB debe tener extensión .glb' },
         { status: 400 },
@@ -84,6 +95,11 @@ export async function POST(request: NextRequest) {
         originalName: string;
       };
       glb?: {
+        key: string;
+        url: string;
+        originalName: string;
+      };
+      previewImage?: {
         key: string;
         url: string;
         originalName: string;
@@ -136,6 +152,29 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    // Upload preview image for dashboard display
+    if (previewImage) {
+      const imageBuffer = Buffer.from(await previewImage.arrayBuffer());
+      const imageKey = `renders/${slug}/preview-${previewImage.name}`;
+
+      uploadPromises.push(
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: imageKey,
+            Body: imageBuffer,
+            ContentType: previewImage.type,
+          }),
+        ),
+      );
+
+      files.previewImage = {
+        key: imageKey,
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${imageKey}`,
+        originalName: previewImage.name,
+      };
+    }
+
     // Upload all files to S3
     await Promise.all(uploadPromises);
 
@@ -170,9 +209,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error uploading render:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }

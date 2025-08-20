@@ -8,6 +8,7 @@ import { RenderData } from '@/types/render';
 import React from 'react';
 import { useSidebar } from '@/components/layouts/DashboardWrapper';
 import { useRecentActivities } from '@/lib/store';
+import Image from 'next/image';
 import {
   FiPlus,
   FiLayout,
@@ -38,19 +39,13 @@ const NavItem = ({ icon, children, active, onClick, count }: NavItemProps) => {
     <div
       className={cn(
         'flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all duration-200',
-        active
-          ? 'bg-gray-700 text-white'
-          : 'bg-transparent text-white hover:bg-gray-700',
+        active ? 'bg-gray-700 text-white' : 'bg-transparent text-white hover:bg-gray-700',
       )}
       onClick={onClick}
     >
       <div className='flex items-center gap-3'>
         {icon}
-        <span
-          className={cn('text-sm', active ? 'font-semibold' : 'font-normal')}
-        >
-          {children}
-        </span>
+        <span className={cn('text-sm', active ? 'font-semibold' : 'font-normal')}>{children}</span>
       </div>
       {count !== undefined && (
         <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-500 text-white'>
@@ -68,12 +63,7 @@ interface RenderCardProps {
   onEdit: (slug: string) => void;
 }
 
-const RenderCard = ({
-  render,
-  onViewAR,
-  onCopyLink,
-  onEdit,
-}: RenderCardProps) => {
+const RenderCard = ({ render, onViewAR, onCopyLink, onEdit }: RenderCardProps) => {
   const hasIOS = Boolean(render.files.usdz);
   const hasAndroid = Boolean(render.files.glb);
   const isFullyCompatible = hasIOS && hasAndroid;
@@ -82,7 +72,17 @@ const RenderCard = ({
     <Card className='bg-gray-800 border-gray-700 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:border-teal-500'>
       <div className='relative aspect-[4/3] overflow-hidden rounded-t-xl'>
         <div className='w-full h-full bg-gray-700 flex items-center justify-center relative'>
-          <FiBox size={64} className='text-teal-500' />
+          {render.files.previewImage ? (
+            <Image
+              src={render.files.previewImage.url}
+              alt={render.name}
+              fill
+              className='object-cover'
+              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+            />
+          ) : (
+            <FiBox size={64} className='text-teal-500' />
+          )}
 
           {/* AR Compatibility indicators */}
           <div className='absolute top-3 right-3 flex gap-1'>
@@ -103,9 +103,7 @@ const RenderCard = ({
             <span
               className={cn(
                 'inline-flex items-center px-2 py-1 rounded text-xs font-medium',
-                isFullyCompatible
-                  ? 'bg-green-500 text-white'
-                  : 'bg-yellow-500 text-black',
+                isFullyCompatible ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black',
               )}
             >
               {isFullyCompatible ? 'AR Completo' : 'Parcial'}
@@ -118,13 +116,9 @@ const RenderCard = ({
         <div className='space-y-3'>
           {/* Header info */}
           <div className='w-full'>
-            <h3 className='font-bold text-md text-white line-clamp-1'>
-              {render.name}
-            </h3>
+            <h3 className='font-bold text-md text-white line-clamp-1'>{render.name}</h3>
             {render.description && (
-              <p className='text-sm text-gray-400 line-clamp-2 mt-1'>
-                {render.description}
-              </p>
+              <p className='text-sm text-gray-400 line-clamp-2 mt-1'>{render.description}</p>
             )}
           </div>
 
@@ -141,43 +135,19 @@ const RenderCard = ({
 
           {/* AR Compatibility Details */}
           <div className='w-full'>
-            <p className='text-xs font-bold text-gray-300 mb-2'>
-              Compatibilidad AR:
-            </p>
+            <p className='text-xs font-bold text-gray-300 mb-2'>Compatibilidad AR:</p>
             <div className='space-y-1'>
               <div className='flex items-center gap-2 w-full'>
-                <FiSmartphone
-                  size={12}
-                  className={hasIOS ? 'text-green-400' : 'text-red-400'}
-                />
-                <p
-                  className={cn(
-                    'text-xs',
-                    hasIOS ? 'text-green-400' : 'text-red-400',
-                  )}
-                >
-                  iOS:{' '}
-                  {hasIOS
-                    ? `✅ ${render.files.usdz?.originalName}`
-                    : '❌ Falta .usdz'}
+                <FiSmartphone size={12} className={hasIOS ? 'text-green-400' : 'text-red-400'} />
+                <p className={cn('text-xs', hasIOS ? 'text-green-400' : 'text-red-400')}>
+                  iOS: {hasIOS ? `✅ ${render.files.usdz?.originalName}` : '❌ Falta .usdz'}
                 </p>
               </div>
 
               <div className='flex items-center gap-2 w-full'>
-                <FiTablet
-                  size={12}
-                  className={hasAndroid ? 'text-green-400' : 'text-red-400'}
-                />
-                <p
-                  className={cn(
-                    'text-xs',
-                    hasAndroid ? 'text-green-400' : 'text-red-400',
-                  )}
-                >
-                  Android:{' '}
-                  {hasAndroid
-                    ? `✅ ${render.files.glb?.originalName}`
-                    : '❌ Falta .glb'}
+                <FiTablet size={12} className={hasAndroid ? 'text-green-400' : 'text-red-400'} />
+                <p className={cn('text-xs', hasAndroid ? 'text-green-400' : 'text-red-400')}>
+                  Android: {hasAndroid ? `✅ ${render.files.glb?.originalName}` : '❌ Falta .glb'}
                 </p>
               </div>
             </div>
@@ -229,12 +199,9 @@ const RecientesView = () => {
     return (
       <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
         <FiClock size={48} className='text-gray-600 mb-4' />
-        <h3 className='text-xl font-bold text-white mb-2'>
-          No hay actividad reciente
-        </h3>
+        <h3 className='text-xl font-bold text-white mb-2'>No hay actividad reciente</h3>
         <p className='text-gray-400 mb-6 max-w-md'>
-          Tus actividades recientes aparecerán aquí cuando interactúes con tus
-          modelos AR.
+          Tus actividades recientes aparecerán aquí cuando interactúes con tus modelos AR.
         </p>
       </div>
     );
@@ -263,12 +230,8 @@ const RecientesView = () => {
                   )}
                 </div>
                 <div className='flex-1'>
-                  <h4 className='text-white font-medium text-sm'>
-                    {activity.title}
-                  </h4>
-                  <p className='text-gray-400 text-xs mt-1'>
-                    {activity.description}
-                  </p>
+                  <h4 className='text-white font-medium text-sm'>{activity.title}</h4>
+                  <p className='text-gray-400 text-xs mt-1'>{activity.description}</p>
                   <p className='text-gray-500 text-xs mt-2'>
                     {new Date(activity.timestamp).toLocaleString()}
                   </p>
@@ -285,15 +248,9 @@ const RecientesView = () => {
 // Analytics View Component
 const AnalyticsView = ({ renders }: { renders: RenderData[] }) => {
   const totalRenders = renders.length;
-  const completeRenders = renders.filter(
-    r => r.files.usdz && r.files.glb,
-  ).length;
-  const iosOnlyRenders = renders.filter(
-    r => r.files.usdz && !r.files.glb,
-  ).length;
-  const androidOnlyRenders = renders.filter(
-    r => !r.files.usdz && r.files.glb,
-  ).length;
+  const completeRenders = renders.filter(r => r.files.usdz && r.files.glb).length;
+  const iosOnlyRenders = renders.filter(r => r.files.usdz && !r.files.glb).length;
+  const androidOnlyRenders = renders.filter(r => !r.files.usdz && r.files.glb).length;
 
   return (
     <div className='space-y-6'>
@@ -323,9 +280,7 @@ const AnalyticsView = ({ renders }: { renders: RenderData[] }) => {
               </div>
               <div>
                 <p className='text-gray-400 text-xs'>AR Completo</p>
-                <p className='text-white text-xl font-bold'>
-                  {completeRenders}
-                </p>
+                <p className='text-white text-xl font-bold'>{completeRenders}</p>
               </div>
             </div>
           </CardContent>
@@ -353,9 +308,7 @@ const AnalyticsView = ({ renders }: { renders: RenderData[] }) => {
               </div>
               <div>
                 <p className='text-gray-400 text-xs'>Solo Android</p>
-                <p className='text-white text-xl font-bold'>
-                  {androidOnlyRenders}
-                </p>
+                <p className='text-white text-xl font-bold'>{androidOnlyRenders}</p>
               </div>
             </div>
           </CardContent>
@@ -367,12 +320,10 @@ const AnalyticsView = ({ renders }: { renders: RenderData[] }) => {
         <CardContent className='p-6'>
           <div className='text-center'>
             <FiActivity size={48} className='text-gray-600 mx-auto mb-4' />
-            <h3 className='text-lg font-bold text-white mb-2'>
-              Más métricas próximamente
-            </h3>
+            <h3 className='text-lg font-bold text-white mb-2'>Más métricas próximamente</h3>
             <p className='text-gray-400'>
-              Estamos trabajando en analytics avanzados incluyendo vistas de
-              modelos, engagement de usuarios, y métricas de rendimiento.
+              Estamos trabajando en analytics avanzados incluyendo vistas de modelos, engagement de
+              usuarios, y métricas de rendimiento.
             </p>
           </div>
         </CardContent>
@@ -385,9 +336,7 @@ export default function RendersPage() {
   const [renders, setRenders] = useState<RenderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeView, setActiveView] = useState<
-    'all' | 'analytics' | 'recientes'
-  >('all');
+  const [activeView, setActiveView] = useState<'all' | 'analytics' | 'recientes'>('all');
   const { isSidebarOpen, setSidebarOpen } = useSidebar();
   const recentActivities = useRecentActivities();
 
@@ -493,9 +442,7 @@ export default function RendersPage() {
             <div className='flex items-start justify-between'>
               <div>
                 <h2 className='text-lg font-bold text-white'>Mis Modelos 3D</h2>
-                <p className='text-sm text-gray-400'>
-                  Gestiona tus experiencias AR
-                </p>
+                <p className='text-sm text-gray-400'>Gestiona tus experiencias AR</p>
               </div>
 
               {/* Mobile close button */}
@@ -532,38 +479,24 @@ export default function RendersPage() {
               <div className='space-y-2 text-sm text-gray-300'>
                 <div className='flex justify-between'>
                   <span>Total modelos:</span>
-                  <span className='font-semibold text-white'>
-                    {renders.length}
-                  </span>
+                  <span className='font-semibold text-white'>{renders.length}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Con AR completo:</span>
                   <span className='font-semibold text-green-400'>
-                    {
-                      renders.filter(
-                        r => Boolean(r.files.usdz) && Boolean(r.files.glb),
-                      ).length
-                    }
+                    {renders.filter(r => Boolean(r.files.usdz) && Boolean(r.files.glb)).length}
                   </span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Solo iOS:</span>
                   <span className='font-semibold text-yellow-400'>
-                    {
-                      renders.filter(
-                        r => Boolean(r.files.usdz) && !Boolean(r.files.glb),
-                      ).length
-                    }
+                    {renders.filter(r => Boolean(r.files.usdz) && !Boolean(r.files.glb)).length}
                   </span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Solo Android:</span>
                   <span className='font-semibold text-yellow-400'>
-                    {
-                      renders.filter(
-                        r => !Boolean(r.files.usdz) && Boolean(r.files.glb),
-                      ).length
-                    }
+                    {renders.filter(r => !Boolean(r.files.usdz) && Boolean(r.files.glb)).length}
                   </span>
                 </div>
               </div>
@@ -577,9 +510,7 @@ export default function RendersPage() {
           <div className='bg-gray-800 border-b border-gray-700 p-4 sm:p-6'>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
               <div>
-                <h1 className='text-xl sm:text-2xl font-bold text-white'>
-                  Mis Modelos AR
-                </h1>
+                <h1 className='text-xl sm:text-2xl font-bold text-white'>Mis Modelos AR</h1>
                 <p className='text-gray-400 mt-1 text-sm sm:text-base'>
                   Gestiona y comparte tus experiencias de Realidad Aumentada
                 </p>
@@ -601,16 +532,13 @@ export default function RendersPage() {
               <>
                 {renders.length === 0 ? (
                   <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
-                    <FiBox
-                      size={48}
-                      className='text-gray-600 mb-4 sm:w-16 sm:h-16'
-                    />
+                    <FiBox size={48} className='text-gray-600 mb-4 sm:w-16 sm:h-16' />
                     <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
                       No tienes modelos AR
                     </h3>
                     <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
-                      Sube tu primer modelo 3D para comenzar a crear
-                      experiencias de Realidad Aumentada increíbles.
+                      Sube tu primer modelo 3D para comenzar a crear experiencias de Realidad
+                      Aumentada increíbles.
                     </p>
                     <Button
                       onClick={() => router.push('/dashboard/renders/upload')}
