@@ -64,7 +64,6 @@ export default function UploadPage() {
           <p>• Usa nombres descriptivos</p>
           <p>• Archivos optimizados funcionan mejor</p>
           <p>• Prueba en dispositivos reales</p>
-          <p>• Comparte en Instagram Stories</p>
         </div>
       </div>
     </div>

@@ -8,6 +8,12 @@ import { RenderData } from '@/types/render';
 import React from 'react';
 import { useSidebar } from '@/components/layouts/DashboardWrapper';
 import {
+  useAppStore,
+  trackActivity,
+  useRecentActivities,
+  RecentActivity,
+} from '@/lib/store';
+import {
   FiPlus,
   FiLayout,
   FiPieChart,
@@ -19,6 +25,10 @@ import {
   FiCopy,
   FiEdit3,
   FiX,
+  FiCalendar,
+  FiActivity,
+  FiTrendingUp,
+  FiUsers,
 } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 
@@ -218,11 +228,175 @@ const RenderCard = ({
   );
 };
 
+// Recientes View Component
+const RecientesView = () => {
+  const recentActivities = useRecentActivities();
+
+  if (recentActivities.length === 0) {
+    return (
+      <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
+        <FiClock size={48} className='text-gray-600 mb-4' />
+        <h3 className='text-xl font-bold text-white mb-2'>
+          No hay actividad reciente
+        </h3>
+        <p className='text-gray-400 mb-6 max-w-md'>
+          Tus actividades recientes aparecerán aquí cuando interactúes con tus
+          modelos AR.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className='space-y-4'>
+      <h2 className='text-xl font-bold text-white mb-4'>Actividad Reciente</h2>
+      <div className='space-y-3'>
+        {recentActivities.map(activity => (
+          <Card key={activity.id} className='bg-gray-800 border-gray-700'>
+            <CardContent className='p-4'>
+              <div className='flex items-start gap-3'>
+                <div className='flex-shrink-0 mt-1'>
+                  {activity.type === 'render_created' && (
+                    <FiPlus className='text-green-400' size={16} />
+                  )}
+                  {activity.type === 'render_viewed' && (
+                    <FiEye className='text-blue-400' size={16} />
+                  )}
+                  {activity.type === 'render_edited' && (
+                    <FiEdit3 className='text-yellow-400' size={16} />
+                  )}
+                  {activity.type === 'render_shared' && (
+                    <FiCopy className='text-purple-400' size={16} />
+                  )}
+                </div>
+                <div className='flex-1'>
+                  <h4 className='text-white font-medium text-sm'>
+                    {activity.title}
+                  </h4>
+                  <p className='text-gray-400 text-xs mt-1'>
+                    {activity.description}
+                  </p>
+                  <p className='text-gray-500 text-xs mt-2'>
+                    {new Date(activity.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Analytics View Component
+const AnalyticsView = ({ renders }: { renders: RenderData[] }) => {
+  const totalRenders = renders.length;
+  const completeRenders = renders.filter(
+    r => r.files.usdz && r.files.glb,
+  ).length;
+  const iosOnlyRenders = renders.filter(
+    r => r.files.usdz && !r.files.glb,
+  ).length;
+  const androidOnlyRenders = renders.filter(
+    r => !r.files.usdz && r.files.glb,
+  ).length;
+
+  return (
+    <div className='space-y-6'>
+      <h2 className='text-xl font-bold text-white mb-4'>Analytics</h2>
+
+      {/* Stats Cards */}
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+        <Card className='bg-gray-800 border-gray-700'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='p-2 bg-teal-600 rounded-lg'>
+                <FiBox className='text-white' size={20} />
+              </div>
+              <div>
+                <p className='text-gray-400 text-xs'>Total Modelos</p>
+                <p className='text-white text-xl font-bold'>{totalRenders}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-gray-800 border-gray-700'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='p-2 bg-green-600 rounded-lg'>
+                <FiTrendingUp className='text-white' size={20} />
+              </div>
+              <div>
+                <p className='text-gray-400 text-xs'>AR Completo</p>
+                <p className='text-white text-xl font-bold'>
+                  {completeRenders}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-gray-800 border-gray-700'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='p-2 bg-blue-600 rounded-lg'>
+                <FiSmartphone className='text-white' size={20} />
+              </div>
+              <div>
+                <p className='text-gray-400 text-xs'>Solo iOS</p>
+                <p className='text-white text-xl font-bold'>{iosOnlyRenders}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-gray-800 border-gray-700'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='p-2 bg-orange-600 rounded-lg'>
+                <FiTablet className='text-white' size={20} />
+              </div>
+              <div>
+                <p className='text-gray-400 text-xs'>Solo Android</p>
+                <p className='text-white text-xl font-bold'>
+                  {androidOnlyRenders}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Coming Soon */}
+      <Card className='bg-gray-800 border-gray-700'>
+        <CardContent className='p-6'>
+          <div className='text-center'>
+            <FiActivity size={48} className='text-gray-600 mx-auto mb-4' />
+            <h3 className='text-lg font-bold text-white mb-2'>
+              Más métricas próximamente
+            </h3>
+            <p className='text-gray-400'>
+              Estamos trabajando en analytics avanzados incluyendo vistas de
+              modelos, engagement de usuarios, y métricas de rendimiento.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 export default function RendersPage() {
   const [renders, setRenders] = useState<RenderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeView, setActiveView] = useState<
+    'all' | 'analytics' | 'recientes'
+  >('all');
   const { isSidebarOpen, setSidebarOpen } = useSidebar();
+  const recentActivities = useRecentActivities();
 
   const router = useRouter();
 
@@ -266,18 +440,22 @@ export default function RendersPage() {
     {
       icon: <FiLayout />,
       label: 'Todos los modelos',
-      active: true,
+      active: activeView === 'all',
       count: renders.length,
+      onClick: () => setActiveView('all'),
     },
     {
       icon: <FiPieChart />,
       label: 'Analytics',
-      active: false,
+      active: activeView === 'analytics',
+      onClick: () => setActiveView('analytics'),
     },
     {
       icon: <FiClock />,
       label: 'Recientes',
-      active: false,
+      active: activeView === 'recientes',
+      count: recentActivities.length,
+      onClick: () => setActiveView('recientes'),
     },
   ];
 
@@ -346,6 +524,7 @@ export default function RendersPage() {
                   icon={item.icon}
                   active={item.active}
                   count={item.count}
+                  onClick={item.onClick}
                 >
                   {item.label}
                 </NavItem>
@@ -425,40 +604,48 @@ export default function RendersPage() {
 
           {/* Content */}
           <div className='flex-1 p-4 sm:p-6 overflow-auto'>
-            {renders.length === 0 ? (
-              <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
-                <FiBox
-                  size={48}
-                  className='text-gray-600 mb-4 sm:w-16 sm:h-16'
-                />
-                <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
-                  No tienes modelos AR
-                </h3>
-                <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
-                  Sube tu primer modelo 3D para comenzar a crear experiencias de
-                  Realidad Aumentada increíbles.
-                </p>
-                <Button
-                  onClick={() => router.push('/dashboard/renders/upload')}
-                  className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
-                >
-                  <FiPlus className='mr-2' />
-                  Subir Mi Primer Modelo
-                </Button>
-              </div>
-            ) : (
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6'>
-                {renders.map(render => (
-                  <RenderCard
-                    key={render._id}
-                    render={render}
-                    onViewAR={handleViewAR}
-                    onCopyLink={handleCopyLink}
-                    onEdit={handleEdit}
-                  />
-                ))}
-              </div>
+            {activeView === 'all' && (
+              <>
+                {renders.length === 0 ? (
+                  <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
+                    <FiBox
+                      size={48}
+                      className='text-gray-600 mb-4 sm:w-16 sm:h-16'
+                    />
+                    <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
+                      No tienes modelos AR
+                    </h3>
+                    <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
+                      Sube tu primer modelo 3D para comenzar a crear
+                      experiencias de Realidad Aumentada increíbles.
+                    </p>
+                    <Button
+                      onClick={() => router.push('/dashboard/renders/upload')}
+                      className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
+                    >
+                      <FiPlus className='mr-2' />
+                      Subir Mi Primer Modelo
+                    </Button>
+                  </div>
+                ) : (
+                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6'>
+                    {renders.map(render => (
+                      <RenderCard
+                        key={render._id}
+                        render={render}
+                        onViewAR={handleViewAR}
+                        onCopyLink={handleCopyLink}
+                        onEdit={handleEdit}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
+
+            {activeView === 'analytics' && <AnalyticsView renders={renders} />}
+
+            {activeView === 'recientes' && <RecientesView />}
           </div>
         </div>
       </div>
