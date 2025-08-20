@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
 import { FiInstagram, FiTwitter, FiSmartphone } from 'react-icons/fi';
+import QRCode from 'qrcode';
 
 interface RenderViewerProps {
   render: RenderData;
@@ -13,17 +13,41 @@ interface RenderViewerProps {
 
 // QR Code Component for Desktop Users
 const QRCodeDisplay = ({ url, size = 120 }: { url: string; size?: number }) => {
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}`;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [qrError, setQrError] = useState(false);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      QRCode.toCanvas(canvasRef.current, url, {
+        width: size,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      }).catch(() => {
+        setQrError(true);
+      });
+    }
+  }, [url, size]);
+
+  if (qrError) {
+    return (
+      <div className='flex flex-col items-center gap-2'>
+        <div
+          className='bg-gray-200 rounded-lg p-4 flex items-center justify-center'
+          style={{ width: size, height: size }}
+        >
+          <p className='text-xs text-gray-500 text-center'>QR no disponible</p>
+        </div>
+        <p className='text-xs text-gray-400 text-center max-w-32'>Copia el enlace manualmente</p>
+      </div>
+    );
+  }
 
   return (
     <div className='flex flex-col items-center gap-2'>
-      <Image
-        src={qrCodeUrl}
-        alt='QR Code para abrir en móvil'
-        className='rounded-lg bg-white p-2'
-        width={size}
-        height={size}
-      />
+      <canvas ref={canvasRef} className='rounded-lg bg-white p-2' width={size} height={size} />
       <p className='text-xs text-gray-400 text-center max-w-32'>Escanea con tu móvil</p>
     </div>
   );

@@ -13,10 +13,15 @@ export const authOptions: NextAuthOptions = {
   ],
   adapter: MongoDBAdapter(clientPromise),
   session: {
-    strategy: 'jwt', // CRITICAL: withAuth middleware only works with JWT
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: '/login',
+    error: '/login', // Redirect to login on auth errors
   },
   callbacks: {
     async jwt({ token, user, account }) {
@@ -77,4 +82,5 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 };
