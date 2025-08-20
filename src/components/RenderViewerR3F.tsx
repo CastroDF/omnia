@@ -24,20 +24,18 @@ const QRCodeDisplay = ({ url, size = 120 }: { url: string; size?: number }) => {
         width={size}
         height={size}
       />
-      <p className='text-xs text-gray-400 text-center max-w-32'>
-        Escanea con tu móvil
-      </p>
+      <p className='text-xs text-gray-400 text-center max-w-32'>Escanea con tu móvil</p>
     </div>
   );
 };
 
 export default function RenderViewerR3F({ render }: RenderViewerProps) {
-  const [deviceType, setDeviceType] = useState<
-    'ios' | 'android' | 'desktop' | 'unknown'
-  >('unknown');
-  const [arCapability, setARCapability] = useState<
-    'available' | 'no-files' | 'not-supported'
-  >('not-supported');
+  const [deviceType, setDeviceType] = useState<'ios' | 'android' | 'desktop' | 'unknown'>(
+    'unknown',
+  );
+  const [arCapability, setARCapability] = useState<'available' | 'no-files' | 'not-supported'>(
+    'not-supported',
+  );
 
   useEffect(() => {
     const detectDevice = () => {
@@ -191,9 +189,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                 {/* Omnia Branding */}
                 <div className='text-right'>
                   <p className='text-teal-400 font-bold text-sm'>Omnia</p>
-                  <p className='text-gray-500 text-xs hidden sm:block'>
-                    AR Platform
-                  </p>
+                  <p className='text-gray-500 text-xs hidden sm:block'>AR Platform</p>
                 </div>
               </div>
             </div>
@@ -201,8 +197,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
             {/* Additional info and mobile social icons */}
             <div className='flex items-center justify-between mt-2'>
               <p className='text-gray-500 text-xs'>
-                {new Date(render.createdAt).toLocaleDateString()} •{' '}
-                {render.userEmail}
+                {new Date(render.createdAt).toLocaleDateString()} • {render.userEmail}
               </p>
 
               {/* Mobile social icons */}
@@ -246,15 +241,13 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                         : 'Este modelo está optimizado para Realidad Aumentada nativa en tu dispositivo.'}
                     </p>
 
-                    {deviceType !== 'desktop' &&
-                    arCapability === 'available' ? (
+                    {deviceType !== 'desktop' && arCapability === 'available' && (
                       <div className='bg-teal-900/30 border border-teal-600/50 rounded-lg p-3'>
                         <p className='text-teal-300 text-sm font-medium text-center'>
-                          🎉 ¡Tu dispositivo soporta AR! Toca el botón para
-                          comenzar
+                          🎉 ¡Tu dispositivo soporta AR! Toca el botón para comenzar
                         </p>
                       </div>
-                    ) : null}
+                    )}
 
                     {deviceType === 'desktop' && (
                       <div className='bg-blue-900/30 border border-blue-600/50 rounded-lg p-4'>
@@ -262,10 +255,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                           <p className='text-blue-300 text-sm text-center font-medium'>
                             💻 Para usar AR en tu móvil:
                           </p>
-                          <QRCodeDisplay
-                            url={window.location.href}
-                            size={100}
-                          />
+                          <QRCodeDisplay url={window.location.href} size={100} />
                           <p className='text-blue-200 text-xs text-center'>
                             O envía este enlace a tu dispositivo móvil
                           </p>
@@ -289,15 +279,11 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
             {/* Instructions Card */}
             <Card className='bg-gray-800 border-gray-700'>
               <CardContent className='p-4 sm:p-6'>
-                <h3 className='text-lg font-bold mb-4 text-white'>
-                  Instrucciones para AR
-                </h3>
+                <h3 className='text-lg font-bold mb-4 text-white'>Instrucciones para AR</h3>
                 <div className='space-y-4 text-sm text-gray-300'>
                   <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                     <div className='space-y-2'>
-                      <h4 className='font-semibold text-teal-400 text-base'>
-                        📱 iPhone/iPad
-                      </h4>
+                      <h4 className='font-semibold text-teal-400 text-base'>📱 iPhone/iPad</h4>
                       <ul className='space-y-2 list-none space-y-1'>
                         <li className='flex items-start gap-2'>
                           <span className='text-teal-400 text-xs'>1.</span>
@@ -309,9 +295,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                         </li>
                         <li className='flex items-start gap-2'>
                           <span className='text-teal-400 text-xs'>3.</span>
-                          <span>
-                            Mueve el dispositivo para encontrar una superficie
-                          </span>
+                          <span>Mueve el dispositivo para encontrar una superficie</span>
                         </li>
                         <li className='flex items-start gap-2'>
                           <span className='text-teal-400 text-xs'>4.</span>
@@ -321,9 +305,7 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                     </div>
 
                     <div className='space-y-2'>
-                      <h4 className='font-semibold text-teal-400 text-base'>
-                        🤖 Android
-                      </h4>
+                      <h4 className='font-semibold text-teal-400 text-base'>🤖 Android</h4>
                       <ul className='space-y-2 list-none'>
                         <li className='flex items-start gap-2'>
                           <span className='text-teal-400 text-xs'>1.</span>
@@ -356,8 +338,8 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                         <QRCodeDisplay url={window.location.href} size={80} />
                         <div className='flex-1 text-center sm:text-left'>
                           <p className='text-gray-300 text-sm mb-2'>
-                            Escanea este código QR con tu móvil para acceder
-                            directamente a la experiencia AR.
+                            Escanea este código QR con tu móvil para acceder directamente a la
+                            experiencia AR.
                           </p>
                           <p className='text-gray-400 text-xs'>
                             Compatible con cualquier app de cámara o escáner QR
@@ -382,15 +364,11 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                       </li>
                       <li className='flex items-start gap-2'>
                         <span className='text-yellow-400'>•</span>
-                        <span>
-                          Mantén el dispositivo estable mientras se carga
-                        </span>
+                        <span>Mantén el dispositivo estable mientras se carga</span>
                       </li>
                       <li className='flex items-start gap-2'>
                         <span className='text-yellow-400'>•</span>
-                        <span>
-                          Si no funciona, recarga la página e intenta nuevamente
-                        </span>
+                        <span>Si no funciona, recarga la página e intenta nuevamente</span>
                       </li>
                     </ul>
                   </div>
@@ -401,31 +379,21 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
             {/* File Info Card */}
             <Card className='bg-gray-800 border-gray-700'>
               <CardContent className='p-4 sm:p-6'>
-                <h3 className='text-lg font-bold mb-4 text-white'>
-                  Información del Modelo
-                </h3>
+                <h3 className='text-lg font-bold mb-4 text-white'>Información del Modelo</h3>
                 <div className='space-y-3 text-sm text-gray-300'>
                   {/* Model Info */}
                   <div className='space-y-2'>
                     <div className='flex flex-col sm:flex-row sm:justify-between'>
-                      <span className='font-semibold text-gray-200'>
-                        Nombre:
-                      </span>
+                      <span className='font-semibold text-gray-200'>Nombre:</span>
                       <span className='text-white'>{render.name}</span>
                     </div>
                     <div className='flex flex-col sm:flex-row sm:justify-between'>
                       <span className='font-semibold text-gray-200'>Slug:</span>
-                      <span className='text-gray-300 font-mono text-xs'>
-                        {render.slug}
-                      </span>
+                      <span className='text-gray-300 font-mono text-xs'>{render.slug}</span>
                     </div>
                     <div className='flex flex-col sm:flex-row sm:justify-between'>
-                      <span className='font-semibold text-gray-200'>
-                        Creado:
-                      </span>
-                      <span>
-                        {new Date(render.createdAt).toLocaleDateString()}
-                      </span>
+                      <span className='font-semibold text-gray-200'>Creado:</span>
+                      <span>{new Date(render.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
 
@@ -435,34 +403,22 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
                       Compatibilidad AR:
                     </h4>
                     <div className='flex flex-col sm:flex-row sm:justify-between'>
-                      <span className='font-semibold text-gray-200'>
-                        iOS (.usdz):
-                      </span>
+                      <span className='font-semibold text-gray-200'>iOS (.usdz):</span>
                       <span>
                         {render.files.usdz ? (
-                          <span className='text-green-400 font-medium'>
-                            ✅ Disponible
-                          </span>
+                          <span className='text-green-400 font-medium'>✅ Disponible</span>
                         ) : (
-                          <span className='text-red-400 font-medium'>
-                            ❌ No disponible
-                          </span>
+                          <span className='text-red-400 font-medium'>❌ No disponible</span>
                         )}
                       </span>
                     </div>
                     <div className='flex flex-col sm:flex-row sm:justify-between'>
-                      <span className='font-semibold text-gray-200'>
-                        Android (.glb):
-                      </span>
+                      <span className='font-semibold text-gray-200'>Android (.glb):</span>
                       <span>
                         {render.files.glb ? (
-                          <span className='text-green-400 font-medium'>
-                            ✅ Disponible
-                          </span>
+                          <span className='text-green-400 font-medium'>✅ Disponible</span>
                         ) : (
-                          <span className='text-red-400 font-medium'>
-                            ❌ No disponible
-                          </span>
+                          <span className='text-red-400 font-medium'>❌ No disponible</span>
                         )}
                       </span>
                     </div>
