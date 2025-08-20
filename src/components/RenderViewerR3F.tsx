@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
@@ -16,7 +17,7 @@ const QRCodeDisplay = ({ url, size = 120 }: { url: string; size?: number }) => {
 
   return (
     <div className='flex flex-col items-center gap-2'>
-      <img
+      <Image
         src={qrCodeUrl}
         alt='QR Code para abrir en móvil'
         className='rounded-lg bg-white p-2'
