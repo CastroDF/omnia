@@ -1,22 +1,11 @@
-import { redirect } from 'next/navigation';
-import { getSession } from '@/lib/auth';
-import DashboardNav from '@/components/DashboardNav';
+import DashboardWrapper from '@/components/layouts/DashboardWrapper';
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
-
-  if (!session || !session.user) {
-    redirect('/api/auth/signin');
-  }
-
-  return (
-    <>
-      <DashboardNav />
-      {children}
-    </>
-  );
+  // Authentication is handled by middleware.ts using withAuth
+  // Users can only reach this layout if they're authenticated
+  return <DashboardWrapper>{children}</DashboardWrapper>;
 }

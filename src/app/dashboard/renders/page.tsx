@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
 import React from 'react';
+import { useSidebar } from '@/components/layouts/DashboardWrapper';
 import {
   FiPlus,
   FiLayout,
@@ -17,6 +18,7 @@ import {
   FiEye,
   FiCopy,
   FiEdit3,
+  FiX,
 } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 
@@ -179,7 +181,7 @@ const RenderCard = ({
           </div>
 
           {/* Action buttons */}
-          <div className='flex gap-2 pt-2'>
+          <div className='flex flex-col sm:flex-row gap-2 pt-2'>
             <Button
               size='sm'
               variant='default'
@@ -189,24 +191,26 @@ const RenderCard = ({
               <FiEye className='mr-1' />
               Ver AR
             </Button>
-            <Button
-              size='sm'
-              variant='outline'
-              className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
-              onClick={() => onCopyLink(render.slug)}
-            >
-              <FiCopy className='mr-1' />
-              Copiar
-            </Button>
-            <Button
-              size='sm'
-              variant='outline'
-              className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
-              onClick={() => onEdit(render.slug)}
-            >
-              <FiEdit3 className='mr-1' />
-              Editar
-            </Button>
+            <div className='flex gap-2'>
+              <Button
+                size='sm'
+                variant='outline'
+                className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+                onClick={() => onCopyLink(render.slug)}
+              >
+                <FiCopy className='mr-1' />
+                Copiar
+              </Button>
+              <Button
+                size='sm'
+                variant='outline'
+                className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+                onClick={() => onEdit(render.slug)}
+              >
+                <FiEdit3 className='mr-1' />
+                Editar
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -218,6 +222,7 @@ export default function RendersPage() {
   const [renders, setRenders] = useState<RenderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { isSidebarOpen, setSidebarOpen } = useSidebar();
 
   const router = useRouter();
 
@@ -293,136 +298,170 @@ export default function RendersPage() {
   }
 
   return (
-    <div className='flex h-screen bg-gray-900'>
-      {/* Sidebar */}
-      <div className='w-64 bg-gray-800 border-r border-gray-700 p-4'>
-        <div className='space-y-6'>
-          {/* Header */}
-          <div>
-            <h2 className='text-lg font-bold text-white'>Mis Modelos 3D</h2>
-            <p className='text-sm text-gray-400'>
-              Gestiona tus experiencias AR
-            </p>
-          </div>
+    <>
+      <div className='flex h-screen bg-gray-900 relative'>
+        {/* Mobile Backdrop */}
+        {isSidebarOpen && (
+          <div
+            className='fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden'
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
-          {/* Navigation */}
-          <div className='space-y-1'>
-            {sidebarNavItems.map((item, index) => (
-              <NavItem
-                key={index}
-                icon={item.icon}
-                active={item.active}
-                count={item.count}
-              >
-                {item.label}
-              </NavItem>
-            ))}
-          </div>
-
-          {/* Quick Stats */}
-          <div className='space-y-3'>
-            <h3 className='text-xs font-semibold text-gray-400 uppercase tracking-wider'>
-              Estadísticas
-            </h3>
-            <div className='space-y-2 text-sm text-gray-300'>
-              <div className='flex justify-between'>
-                <span>Total modelos:</span>
-                <span className='font-semibold text-white'>
-                  {renders.length}
-                </span>
+        {/* Sidebar */}
+        <div
+          className={`
+          fixed lg:static inset-y-0 left-0 z-50
+          w-64 bg-gray-800 border-r border-gray-700 p-4
+          transform transition-transform duration-300 ease-in-out lg:transform-none
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+        >
+          <div className='space-y-6'>
+            {/* Header */}
+            <div className='flex items-start justify-between'>
+              <div>
+                <h2 className='text-lg font-bold text-white'>Mis Modelos 3D</h2>
+                <p className='text-sm text-gray-400'>
+                  Gestiona tus experiencias AR
+                </p>
               </div>
-              <div className='flex justify-between'>
-                <span>Con AR completo:</span>
-                <span className='font-semibold text-green-400'>
-                  {
-                    renders.filter(
-                      r => Boolean(r.files.usdz) && Boolean(r.files.glb),
-                    ).length
-                  }
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span>Solo iOS:</span>
-                <span className='font-semibold text-yellow-400'>
-                  {
-                    renders.filter(
-                      r => Boolean(r.files.usdz) && !Boolean(r.files.glb),
-                    ).length
-                  }
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span>Solo Android:</span>
-                <span className='font-semibold text-yellow-400'>
-                  {
-                    renders.filter(
-                      r => !Boolean(r.files.usdz) && Boolean(r.files.glb),
-                    ).length
-                  }
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Main content */}
-      <div className='flex-1 flex flex-col'>
-        {/* Header */}
-        <div className='bg-gray-800 border-b border-gray-700 p-6'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h1 className='text-2xl font-bold text-white'>Mis Modelos AR</h1>
-              <p className='text-gray-400 mt-1'>
-                Gestiona y comparte tus experiencias de Realidad Aumentada
-              </p>
-            </div>
-
-            <Button
-              onClick={() => router.push('/dashboard/renders/upload')}
-              className='bg-teal-600 hover:bg-teal-500'
-            >
-              <FiPlus className='mr-2' />
-              Subir Modelo
-            </Button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className='flex-1 p-6 overflow-auto'>
-          {renders.length === 0 ? (
-            <div className='flex flex-col items-center justify-center h-96 text-center'>
-              <FiBox size={64} className='text-gray-600 mb-4' />
-              <h3 className='text-xl font-bold text-white mb-2'>
-                No tienes modelos AR
-              </h3>
-              <p className='text-gray-400 mb-6 max-w-md'>
-                Sube tu primer modelo 3D para comenzar a crear experiencias de
-                Realidad Aumentada increíbles.
-              </p>
+              {/* Mobile close button */}
               <Button
-                onClick={() => router.push('/dashboard/renders/upload')}
-                className='bg-teal-600 hover:bg-teal-500'
+                variant='ghost'
+                size='sm'
+                className='lg:hidden text-gray-400 hover:text-white hover:bg-gray-700 p-1'
+                onClick={() => setSidebarOpen(false)}
               >
-                <FiPlus className='mr-2' />
-                Subir Mi Primer Modelo
+                <FiX size={20} />
               </Button>
             </div>
-          ) : (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-              {renders.map(render => (
-                <RenderCard
-                  key={render._id}
-                  render={render}
-                  onViewAR={handleViewAR}
-                  onCopyLink={handleCopyLink}
-                  onEdit={handleEdit}
-                />
+
+            {/* Navigation */}
+            <div className='space-y-1'>
+              {sidebarNavItems.map((item, index) => (
+                <NavItem
+                  key={index}
+                  icon={item.icon}
+                  active={item.active}
+                  count={item.count}
+                >
+                  {item.label}
+                </NavItem>
               ))}
             </div>
-          )}
+
+            {/* Quick Stats */}
+            <div className='space-y-3'>
+              <h3 className='text-xs font-semibold text-gray-400 uppercase tracking-wider'>
+                Estadísticas
+              </h3>
+              <div className='space-y-2 text-sm text-gray-300'>
+                <div className='flex justify-between'>
+                  <span>Total modelos:</span>
+                  <span className='font-semibold text-white'>
+                    {renders.length}
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Con AR completo:</span>
+                  <span className='font-semibold text-green-400'>
+                    {
+                      renders.filter(
+                        r => Boolean(r.files.usdz) && Boolean(r.files.glb),
+                      ).length
+                    }
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Solo iOS:</span>
+                  <span className='font-semibold text-yellow-400'>
+                    {
+                      renders.filter(
+                        r => Boolean(r.files.usdz) && !Boolean(r.files.glb),
+                      ).length
+                    }
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Solo Android:</span>
+                  <span className='font-semibold text-yellow-400'>
+                    {
+                      renders.filter(
+                        r => !Boolean(r.files.usdz) && Boolean(r.files.glb),
+                      ).length
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className='flex-1 flex flex-col lg:ml-0'>
+          {/* Header */}
+          <div className='bg-gray-800 border-b border-gray-700 p-4 sm:p-6'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+              <div>
+                <h1 className='text-xl sm:text-2xl font-bold text-white'>
+                  Mis Modelos AR
+                </h1>
+                <p className='text-gray-400 mt-1 text-sm sm:text-base'>
+                  Gestiona y comparte tus experiencias de Realidad Aumentada
+                </p>
+              </div>
+
+              <Button
+                onClick={() => router.push('/dashboard/renders/upload')}
+                className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
+              >
+                <FiPlus className='mr-2' />
+                Subir Modelo
+              </Button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className='flex-1 p-4 sm:p-6 overflow-auto'>
+            {renders.length === 0 ? (
+              <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
+                <FiBox
+                  size={48}
+                  className='text-gray-600 mb-4 sm:w-16 sm:h-16'
+                />
+                <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
+                  No tienes modelos AR
+                </h3>
+                <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
+                  Sube tu primer modelo 3D para comenzar a crear experiencias de
+                  Realidad Aumentada increíbles.
+                </p>
+                <Button
+                  onClick={() => router.push('/dashboard/renders/upload')}
+                  className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
+                >
+                  <FiPlus className='mr-2' />
+                  Subir Mi Primer Modelo
+                </Button>
+              </div>
+            ) : (
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6'>
+                {renders.map(render => (
+                  <RenderCard
+                    key={render._id}
+                    render={render}
+                    onViewAR={handleViewAR}
+                    onCopyLink={handleCopyLink}
+                    onEdit={handleEdit}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

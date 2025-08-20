@@ -12,15 +12,29 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),
+  session: {
+    strategy: 'jwt', // CRITICAL: withAuth middleware only works with JWT
+  },
   pages: {
     signIn: '/login',
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session?.user) {
-        session.user.id = user.id;
-        session.user.role = user.role || 'user';
-        session.user.active = user.active !== false; // Default to true if not set
+    async jwt({ token, user, account }) {
+      // Persist the OAuth account info and user info to the token right after signin
+      if (account && user) {
+        // First time user signs in
+        token.id = user.id;
+        token.role = user.role || 'user';
+        token.active = user.active !== false;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Send properties to the client
+      if (session?.user && token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.active = token.active as boolean;
       }
       return session;
     },

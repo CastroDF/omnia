@@ -10,18 +10,18 @@ const DashboardPage: React.FC = () => {
   const { data: session } = useSession();
 
   return (
-    <div className='container max-w-7xl mx-auto px-4 py-10'>
-      <div className='space-y-8'>
+    <div className='container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10'>
+      <div className='space-y-6 sm:space-y-8'>
         <div>
-          <h1 className='text-3xl font-bold mb-2'>
+          <h1 className='text-2xl sm:text-3xl font-bold mb-2'>
             ¡Bienvenido de vuelta, {session?.user?.name?.split(' ')[0]}!
           </h1>
-          <p className='text-gray-600 text-lg'>
+          <p className='text-gray-600 text-base sm:text-lg'>
             Gestiona tus renders 3D y compártelos con realidad aumentada
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6'>
           <Card>
             <CardContent className='p-6'>
               <div className='space-y-4'>
@@ -32,7 +32,7 @@ const DashboardPage: React.FC = () => {
                   Sube tus archivos .obj y .mtl para crear un nuevo render 3D
                 </p>
                 <Button
-                  className='bg-teal-600 hover:bg-teal-700'
+                  className='bg-teal-600 hover:bg-teal-700 w-full sm:w-auto'
                   onClick={() => router.push('/dashboard/renders/upload')}
                 >
                   Subir Render
@@ -50,7 +50,7 @@ const DashboardPage: React.FC = () => {
                 </p>
                 <Button
                   variant='outline'
-                  className='border-blue-500 text-blue-500 hover:bg-blue-50'
+                  className='border-blue-500 text-blue-500 hover:bg-blue-50 w-full sm:w-auto'
                   onClick={() => router.push('/dashboard/renders')}
                 >
                   Ver Renders
@@ -62,7 +62,7 @@ const DashboardPage: React.FC = () => {
 
         <div>
           <h3 className='text-lg font-bold mb-4'>¿Cómo funciona Omnia?</h3>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
             <div className='p-4 bg-gray-50 rounded-md'>
               <p className='font-bold mb-2'>1. Sube tu render</p>
               <p className='text-sm text-gray-600'>
