@@ -11,8 +11,6 @@ import { useRecentActivities } from '@/lib/store';
 import Image from 'next/image';
 import {
   FiPlus,
-  FiLayout,
-  FiPieChart,
   FiClock,
   FiSmartphone,
   FiTablet,
@@ -20,41 +18,10 @@ import {
   FiEye,
   FiCopy,
   FiEdit3,
-  FiX,
   FiActivity,
   FiTrendingUp,
 } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
-
-interface NavItemProps {
-  icon: React.ReactElement;
-  children: React.ReactNode;
-  active?: boolean;
-  onClick?: () => void;
-  count?: number;
-}
-
-const NavItem = ({ icon, children, active, onClick, count }: NavItemProps) => {
-  return (
-    <div
-      className={cn(
-        'flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all duration-200',
-        active ? 'bg-gray-700 text-white' : 'bg-transparent text-white hover:bg-gray-700',
-      )}
-      onClick={onClick}
-    >
-      <div className='flex items-center gap-3'>
-        {icon}
-        <span className={cn('text-sm', active ? 'font-semibold' : 'font-normal')}>{children}</span>
-      </div>
-      {count !== undefined && (
-        <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-500 text-white'>
-          {count}
-        </span>
-      )}
-    </div>
-  );
-};
 
 interface RenderCardProps {
   render: RenderData;
@@ -347,8 +314,7 @@ export default function RendersPage() {
   const [renders, setRenders] = useState<RenderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeView, setActiveView] = useState<'all' | 'analytics' | 'recientes'>('all');
-  const { isSidebarOpen, setSidebarOpen } = useSidebar();
+  const { activeView, updateSidebarStats } = useSidebar();
   const recentActivities = useRecentActivities();
 
   const router = useRouter();
@@ -375,6 +341,22 @@ export default function RendersPage() {
     fetchRenders();
   }, []);
 
+  useEffect(() => {
+    if (renders.length > 0) {
+      const completeRenders = renders.filter(r => r.files.usdz && r.files.glb).length;
+      const iosOnly = renders.filter(r => r.files.usdz && !r.files.glb).length;
+      const androidOnly = renders.filter(r => !r.files.usdz && r.files.glb).length;
+
+      updateSidebarStats({
+        rendersCount: renders.length,
+        recentActivitiesCount: recentActivities.length,
+        completeRendersCount: completeRenders,
+        iosOnlyCount: iosOnly,
+        androidOnlyCount: androidOnly,
+      });
+    }
+  }, [renders, recentActivities.length, updateSidebarStats]);
+
   const handleViewAR = (slug: string) => {
     router.push(`/render/${slug}`);
   };
@@ -388,29 +370,6 @@ export default function RendersPage() {
   const handleEdit = (slug: string) => {
     router.push(`/dashboard/renders/${slug}/edit`);
   };
-
-  const sidebarNavItems = [
-    {
-      icon: <FiLayout />,
-      label: 'Todos los modelos',
-      active: activeView === 'all',
-      count: renders.length,
-      onClick: () => setActiveView('all'),
-    },
-    {
-      icon: <FiPieChart />,
-      label: 'Analytics',
-      active: activeView === 'analytics',
-      onClick: () => setActiveView('analytics'),
-    },
-    {
-      icon: <FiClock />,
-      label: 'Recientes',
-      active: activeView === 'recientes',
-      count: recentActivities.length,
-      onClick: () => setActiveView('recientes'),
-    },
-  ];
 
   if (loading) {
     return (
@@ -429,158 +388,69 @@ export default function RendersPage() {
   }
 
   return (
-    <>
-      <div className='flex h-screen bg-gray-900 relative'>
-        {/* Mobile Backdrop */}
-        {isSidebarOpen && (
-          <div
-            className='fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden'
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Sidebar */}
-        <div
-          className={`
-          fixed lg:static inset-y-0 left-0 z-50
-          w-64 bg-gray-800 border-r border-gray-700 p-4
-          transform transition-transform duration-300 ease-in-out lg:transform-none
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        `}
-        >
-          <div className='space-y-6'>
-            {/* Header */}
-            <div className='flex items-start justify-between'>
-              <div>
-                <h2 className='text-lg font-bold text-white'>Mis Modelos 3D</h2>
-                <p className='text-sm text-gray-400'>Gestiona tus experiencias AR</p>
-              </div>
-
-              {/* Mobile close button */}
-              <Button
-                variant='ghost'
-                size='sm'
-                className='lg:hidden text-gray-400 hover:text-white hover:bg-gray-700 p-1'
-                onClick={() => setSidebarOpen(false)}
-              >
-                <FiX size={20} />
-              </Button>
-            </div>
-
-            {/* Navigation */}
-            <div className='space-y-1'>
-              {sidebarNavItems.map((item, index) => (
-                <NavItem
-                  key={index}
-                  icon={item.icon}
-                  active={item.active}
-                  count={item.count}
-                  onClick={item.onClick}
-                >
-                  {item.label}
-                </NavItem>
-              ))}
-            </div>
-
-            {/* Quick Stats */}
-            <div className='space-y-3'>
-              <h3 className='text-xs font-semibold text-gray-400 uppercase tracking-wider'>
-                Estadísticas
-              </h3>
-              <div className='space-y-2 text-sm text-gray-300'>
-                <div className='flex justify-between'>
-                  <span>Total modelos:</span>
-                  <span className='font-semibold text-white'>{renders.length}</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Con AR completo:</span>
-                  <span className='font-semibold text-green-400'>
-                    {renders.filter(r => Boolean(r.files.usdz) && Boolean(r.files.glb)).length}
-                  </span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Solo iOS:</span>
-                  <span className='font-semibold text-yellow-400'>
-                    {renders.filter(r => Boolean(r.files.usdz) && !Boolean(r.files.glb)).length}
-                  </span>
-                </div>
-                <div className='flex justify-between'>
-                  <span>Solo Android:</span>
-                  <span className='font-semibold text-yellow-400'>
-                    {renders.filter(r => !Boolean(r.files.usdz) && Boolean(r.files.glb)).length}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className='flex-1 flex flex-col lg:ml-0'>
-          {/* Header */}
-          <div className='bg-gray-800 border-b border-gray-700 p-4 sm:p-6'>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-              <div>
-                <h1 className='text-xl sm:text-2xl font-bold text-white'>Mis Modelos AR</h1>
-                <p className='text-gray-400 mt-1 text-sm sm:text-base'>
-                  Gestiona y comparte tus experiencias de Realidad Aumentada
-                </p>
-              </div>
-
-              <Button
-                onClick={() => router.push('/dashboard/renders/upload')}
-                className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
-              >
-                <FiPlus className='mr-2' />
-                Subir Modelo
-              </Button>
-            </div>
+    <div className='p-6'>
+      {/* Header */}
+      <div className='mb-8'>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+          <div>
+            <h1 className='text-xl sm:text-2xl font-bold text-white'>Mis Modelos AR</h1>
+            <p className='text-gray-400 mt-1 text-sm sm:text-base'>
+              Gestiona y comparte tus experiencias de Realidad Aumentada
+            </p>
           </div>
 
-          {/* Content */}
-          <div className='flex-1 p-4 sm:p-6 overflow-auto'>
-            {activeView === 'all' && (
-              <>
-                {renders.length === 0 ? (
-                  <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
-                    <FiBox size={48} className='text-gray-600 mb-4 sm:w-16 sm:h-16' />
-                    <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
-                      No tienes modelos AR
-                    </h3>
-                    <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
-                      Sube tu primer modelo 3D para comenzar a crear experiencias de Realidad
-                      Aumentada increíbles.
-                    </p>
-                    <Button
-                      onClick={() => router.push('/dashboard/renders/upload')}
-                      className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
-                    >
-                      <FiPlus className='mr-2' />
-                      Subir Mi Primer Modelo
-                    </Button>
-                  </div>
-                ) : (
-                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6'>
-                    {renders.map(render => (
-                      <RenderCard
-                        key={render._id}
-                        render={render}
-                        onViewAR={handleViewAR}
-                        onCopyLink={handleCopyLink}
-                        onEdit={handleEdit}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-
-            {activeView === 'analytics' && <AnalyticsView renders={renders} />}
-
-            {activeView === 'recientes' && <RecientesView />}
-          </div>
+          <Button
+            onClick={() => router.push('/dashboard/renders/upload')}
+            className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
+          >
+            <FiPlus className='mr-2' />
+            Subir Modelo
+          </Button>
         </div>
       </div>
-    </>
+
+      {/* Content */}
+      <div className='space-y-6'>
+        {activeView === 'all' && (
+          <>
+            {renders.length === 0 ? (
+              <div className='flex flex-col items-center justify-center h-96 text-center px-4'>
+                <FiBox size={48} className='text-gray-600 mb-4 sm:w-16 sm:h-16' />
+                <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>
+                  No tienes modelos AR
+                </h3>
+                <p className='text-gray-400 mb-6 max-w-md text-sm sm:text-base'>
+                  Sube tu primer modelo 3D para comenzar a crear experiencias de Realidad Aumentada
+                  increíbles.
+                </p>
+                <Button
+                  onClick={() => router.push('/dashboard/renders/upload')}
+                  className='bg-teal-600 hover:bg-teal-500 w-full sm:w-auto'
+                >
+                  <FiPlus className='mr-2' />
+                  Subir Mi Primer Modelo
+                </Button>
+              </div>
+            ) : (
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6'>
+                {renders.map(render => (
+                  <RenderCard
+                    key={render._id}
+                    render={render}
+                    onViewAR={handleViewAR}
+                    onCopyLink={handleCopyLink}
+                    onEdit={handleEdit}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {activeView === 'analytics' && <AnalyticsView renders={renders} />}
+
+        {activeView === 'recientes' && <RecientesView />}
+      </div>
+    </div>
   );
 }

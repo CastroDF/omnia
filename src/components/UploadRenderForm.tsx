@@ -61,15 +61,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <Card className='bg-gray-700 border-gray-600 w-full transition-all duration-200 hover:border-gray-500'>
-      <CardContent className='p-4'>
+      <CardContent className='p-3 sm:p-4'>
         <div className='space-y-3'>
           {/* Header */}
-          <div className='flex items-center justify-between'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0'>
             <div className='flex items-center gap-2'>
               {icon}
-              <span className='font-semibold text-white text-base'>
-                {label}
-              </span>
+              <span className='font-semibold text-white text-sm sm:text-base'>{label}</span>
               <span
                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badgeColor}`}
               >
@@ -83,23 +81,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
             {!selectedFile ? (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className='border-2 border-dashed border-gray-500 rounded-lg p-4 text-center cursor-pointer transition-all duration-200 hover:border-teal-500 hover:bg-gray-600/30 group'
+                className='border-2 border-dashed border-gray-500 rounded-lg p-3 sm:p-4 text-center cursor-pointer transition-all duration-200 hover:border-teal-500 hover:bg-gray-600/30 group'
               >
                 <FiUpload
                   size={20}
                   className='mx-auto text-gray-400 group-hover:text-teal-400 transition-colors'
                 />
-                <p className='mt-2 text-white font-medium text-sm'>
-                  Seleccionar archivo
-                </p>
-                <p className='text-xs text-gray-400 mt-1'>
-                  Arrastra aquí o haz clic
-                </p>
+                <p className='mt-2 text-white font-medium text-sm'>Seleccionar archivo</p>
+                <p className='text-xs text-gray-400 mt-1'>Arrastra aquí o haz clic</p>
                 <Button
                   type='button'
                   variant='outline'
                   size='sm'
-                  className='mt-2 border-gray-500 text-gray-300 hover:bg-teal-600 hover:border-teal-600 hover:text-white text-xs'
+                  className='mt-2 border-gray-500 text-gray-300 hover:bg-teal-600 hover:border-teal-600 hover:text-white text-xs w-full sm:w-auto'
                   onClick={e => {
                     e.stopPropagation();
                     fileInputRef.current?.click();
@@ -111,13 +105,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
               </div>
             ) : (
               <div className='bg-gray-600 rounded-lg p-3 border border-gray-500'>
-                <div className='flex items-center justify-between'>
+                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0'>
                   <div className='flex items-center gap-2'>
                     <FiCheckCircle className='text-green-400' size={16} />
-                    <div>
-                      <p className='text-white font-medium text-sm'>
-                        {selectedFile.name}
-                      </p>
+                    <div className='min-w-0 flex-1'>
+                      <p className='text-white font-medium text-sm truncate'>{selectedFile.name}</p>
                       <p className='text-gray-400 text-xs'>
                         {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                       </p>
@@ -128,7 +120,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                     variant='ghost'
                     size='sm'
                     onClick={handleRemoveFile}
-                    className='text-red-400 hover:text-red-300 hover:bg-red-500/20 h-6 w-6 p-0'
+                    className='text-red-400 hover:text-red-300 hover:bg-red-500/20 h-8 w-8 p-0 self-end sm:self-center'
                   >
                     <FiX size={14} />
                   </Button>
@@ -146,9 +138,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             />
 
             {/* Description */}
-            <p className='text-xs text-gray-400 leading-relaxed'>
-              {description}
-            </p>
+            <p className='text-xs text-gray-400 leading-relaxed'>{description}</p>
           </div>
         </div>
       </CardContent>
@@ -237,19 +227,19 @@ export default function UploadRenderForm() {
   };
 
   return (
-    <div className='space-y-6 w-full max-w-4xl mx-auto'>
+    <div className='space-y-4 sm:space-y-6 w-full max-w-4xl mx-auto'>
       {/* Main form card */}
       <Card className='bg-gray-800 border-gray-700 shadow-2xl'>
-        <CardContent className='p-6'>
+        <CardContent className='p-4 sm:p-6'>
           <form onSubmit={handleSubmit}>
-            <div className='space-y-6'>
+            <div className='space-y-4 sm:space-y-6'>
               {/* Basic information section */}
               <div className='w-full'>
-                <h2 className='text-lg font-semibold text-white mb-4 flex items-center gap-2'>
+                <h2 className='text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2'>
                   📝 <span>Información del Modelo</span>
                 </h2>
 
-                <div className='grid gap-4'>
+                <div className='grid gap-3 sm:gap-4'>
                   <div className='w-full'>
                     <label className='block font-medium mb-2 text-gray-200 text-sm'>
                       Nombre del modelo *
@@ -281,11 +271,11 @@ export default function UploadRenderForm() {
 
               {/* File upload sections */}
               <div className='w-full'>
-                <h2 className='text-lg font-semibold text-white mb-4 flex items-center gap-2'>
+                <h2 className='text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2'>
                   🥽 <span>Archivos AR</span>
                 </h2>
 
-                <div className='space-y-4'>
+                <div className='space-y-3 sm:space-y-4'>
                   {/* USDZ File Upload */}
                   <FileUpload
                     onFileSelect={setUsdzFile}
@@ -314,7 +304,7 @@ export default function UploadRenderForm() {
 
               {/* Image upload section */}
               <div className='w-full'>
-                <h2 className='text-lg font-semibold text-white mb-4 flex items-center gap-2'>
+                <h2 className='text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2'>
                   🖼️ <span>Imagen de Vista Previa</span>
                   <span className='text-xs bg-gray-600 px-2 py-1 rounded text-gray-300'>
                     Opcional
@@ -338,7 +328,7 @@ export default function UploadRenderForm() {
                 {!isUploading && !result && (
                   <Button
                     type='submit'
-                    className='w-full bg-teal-600 hover:bg-teal-700 text-white h-10'
+                    className='w-full bg-teal-600 hover:bg-teal-700 text-white h-10 text-sm sm:text-base'
                     disabled={!name.trim() || (!usdzFile && !glbFile)}
                   >
                     <FiUpload className='mr-2' size={16} />
@@ -362,7 +352,7 @@ export default function UploadRenderForm() {
 
                 {result && !isUploading && (
                   <div
-                    className={`p-3 rounded-lg ${
+                    className={`p-3 sm:p-4 rounded-lg ${
                       result.success
                         ? 'bg-green-500/20 border border-green-500/30'
                         : 'bg-red-500/20 border border-red-500/30'
@@ -386,16 +376,13 @@ export default function UploadRenderForm() {
                     {result.success && result.slug ? (
                       <div className='mt-2 space-y-2'>
                         <p className='text-green-100 text-sm'>
-                          Tu modelo AR fue subido correctamente y está listo
-                          para usar.
+                          Tu modelo AR fue subido correctamente y está listo para usar.
                         </p>
-                        <div className='flex gap-2'>
+                        <div className='flex flex-col sm:flex-row gap-2'>
                           <Button
                             size='sm'
-                            onClick={() =>
-                              router.push(`/render/${result.slug}`)
-                            }
-                            className='bg-green-600 hover:bg-green-700'
+                            onClick={() => router.push(`/render/${result.slug}`)}
+                            className='bg-green-600 hover:bg-green-700 w-full sm:w-auto'
                           >
                             Ver en AR
                             <FiArrowRight className='ml-1' size={14} />
@@ -404,16 +391,14 @@ export default function UploadRenderForm() {
                             variant='outline'
                             size='sm'
                             onClick={() => router.push('/dashboard/renders')}
-                            className='border-green-500 text-green-400 hover:bg-green-500/10'
+                            className='border-green-500 text-green-400 hover:bg-green-500/10 w-full sm:w-auto'
                           >
                             Ir a Mis Renders
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      <p className='text-red-100 mt-2 text-sm'>
-                        {result.error}
-                      </p>
+                      <p className='text-red-100 mt-2 text-sm'>{result.error}</p>
                     )}
                   </div>
                 )}
