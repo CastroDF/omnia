@@ -69,124 +69,135 @@ const RenderCard = ({ render, onViewAR, onCopyLink, onEdit }: RenderCardProps) =
   const isFullyCompatible = hasIOS && hasAndroid;
 
   return (
-    <Card className='bg-gray-800 border-gray-700 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:border-teal-500'>
-      <div className='relative aspect-[4/3] overflow-hidden rounded-t-xl'>
-        <div className='w-full h-full bg-gray-700 flex items-center justify-center relative'>
-          {render.files.previewImage ? (
-            <Image
-              src={render.files.previewImage.url}
-              alt={render.name}
-              fill
-              className='object-cover'
-              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-            />
-          ) : (
-            <FiBox size={64} className='text-teal-500' />
-          )}
-
-          {/* AR Compatibility indicators */}
-          <div className='absolute top-3 right-3 flex gap-1'>
-            {hasIOS && (
-              <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500 text-white'>
-                📱 iOS
-              </span>
+    <Card className='bg-gray-800 border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:border-teal-500'>
+      {/* Clickable area for the entire card content */}
+      <div className='cursor-pointer' onClick={() => onViewAR(render.slug)}>
+        <div className='relative aspect-[4/3] overflow-hidden rounded-t-xl'>
+          <div className='w-full h-full bg-gray-700 flex items-center justify-center relative'>
+            {render.files.previewImage ? (
+              <Image
+                src={render.files.previewImage.url}
+                alt={render.name}
+                fill
+                className='object-cover'
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+              />
+            ) : (
+              <FiBox size={64} className='text-teal-500' />
             )}
-            {hasAndroid && (
-              <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500 text-white'>
-                🤖 Android
-              </span>
-            )}
-          </div>
 
-          {/* Status indicator */}
-          <div className='absolute top-3 left-3'>
-            <span
-              className={cn(
-                'inline-flex items-center px-2 py-1 rounded text-xs font-medium',
-                isFullyCompatible ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black',
+            {/* AR Compatibility indicators */}
+            <div className='absolute top-3 right-3 flex gap-1'>
+              {hasIOS && (
+                <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500 text-white'>
+                  📱 iOS
+                </span>
               )}
+              {hasAndroid && (
+                <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500 text-white'>
+                  🤖 Android
+                </span>
+              )}
+            </div>
+
+            {/* Status indicator */}
+            <div className='absolute top-3 left-3'>
+              <span
+                className={cn(
+                  'inline-flex items-center px-2 py-1 rounded text-xs font-medium',
+                  isFullyCompatible ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black',
+                )}
+              >
+                {isFullyCompatible ? 'AR Completo' : 'Parcial'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <CardContent className='p-4'>
+          <div className='space-y-3'>
+            {/* Header info */}
+            <div className='w-full'>
+              <h3 className='font-bold text-md text-white line-clamp-1'>{render.name}</h3>
+              {render.description && (
+                <p className='text-sm text-gray-400 line-clamp-2 mt-1'>{render.description}</p>
+              )}
+            </div>
+
+            {/* Metadata */}
+            <div className='space-y-1 w-full'>
+              <p className='text-xs text-gray-500'>
+                <span className='font-semibold'>Slug:</span> {render.slug}
+              </p>
+              <p className='text-xs text-gray-500'>
+                <span className='font-semibold'>Creado:</span>{' '}
+                {new Date(render.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+
+            {/* AR Compatibility Details */}
+            <div className='w-full'>
+              <p className='text-xs font-bold text-gray-300 mb-2'>Compatibilidad AR:</p>
+              <div className='space-y-1'>
+                <div className='flex items-center gap-2 w-full'>
+                  <FiSmartphone size={12} className={hasIOS ? 'text-green-400' : 'text-red-400'} />
+                  <p className={cn('text-xs', hasIOS ? 'text-green-400' : 'text-red-400')}>
+                    iOS: {hasIOS ? `✅ ${render.files.usdz?.originalName}` : '❌ Falta .usdz'}
+                  </p>
+                </div>
+
+                <div className='flex items-center gap-2 w-full'>
+                  <FiTablet size={12} className={hasAndroid ? 'text-green-400' : 'text-red-400'} />
+                  <p className={cn('text-xs', hasAndroid ? 'text-green-400' : 'text-red-400')}>
+                    Android: {hasAndroid ? `✅ ${render.files.glb?.originalName}` : '❌ Falta .glb'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </div>
+
+      {/* Action buttons - outside clickable area */}
+      <div className='px-4 pb-4'>
+        <div className='flex flex-col sm:flex-row gap-2'>
+          <Button
+            size='sm'
+            variant='default'
+            className='flex-1 text-xs'
+            onClick={() => onViewAR(render.slug)}
+          >
+            <FiEye className='mr-1' />
+            Ver AR
+          </Button>
+          <div className='flex gap-2'>
+            <Button
+              size='sm'
+              variant='outline'
+              className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+              onClick={e => {
+                e.stopPropagation();
+                onCopyLink(render.slug);
+              }}
             >
-              {isFullyCompatible ? 'AR Completo' : 'Parcial'}
-            </span>
+              <FiCopy className='mr-1' />
+              Copiar
+            </Button>
+            <Button
+              size='sm'
+              variant='outline'
+              className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+              onClick={e => {
+                e.stopPropagation();
+                onEdit(render.slug);
+              }}
+            >
+              <FiEdit3 className='mr-1' />
+              Editar
+            </Button>
           </div>
         </div>
       </div>
-
-      <CardContent className='p-4'>
-        <div className='space-y-3'>
-          {/* Header info */}
-          <div className='w-full'>
-            <h3 className='font-bold text-md text-white line-clamp-1'>{render.name}</h3>
-            {render.description && (
-              <p className='text-sm text-gray-400 line-clamp-2 mt-1'>{render.description}</p>
-            )}
-          </div>
-
-          {/* Metadata */}
-          <div className='space-y-1 w-full'>
-            <p className='text-xs text-gray-500'>
-              <span className='font-semibold'>Slug:</span> {render.slug}
-            </p>
-            <p className='text-xs text-gray-500'>
-              <span className='font-semibold'>Creado:</span>{' '}
-              {new Date(render.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-
-          {/* AR Compatibility Details */}
-          <div className='w-full'>
-            <p className='text-xs font-bold text-gray-300 mb-2'>Compatibilidad AR:</p>
-            <div className='space-y-1'>
-              <div className='flex items-center gap-2 w-full'>
-                <FiSmartphone size={12} className={hasIOS ? 'text-green-400' : 'text-red-400'} />
-                <p className={cn('text-xs', hasIOS ? 'text-green-400' : 'text-red-400')}>
-                  iOS: {hasIOS ? `✅ ${render.files.usdz?.originalName}` : '❌ Falta .usdz'}
-                </p>
-              </div>
-
-              <div className='flex items-center gap-2 w-full'>
-                <FiTablet size={12} className={hasAndroid ? 'text-green-400' : 'text-red-400'} />
-                <p className={cn('text-xs', hasAndroid ? 'text-green-400' : 'text-red-400')}>
-                  Android: {hasAndroid ? `✅ ${render.files.glb?.originalName}` : '❌ Falta .glb'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className='flex flex-col sm:flex-row gap-2 pt-2'>
-            <Button
-              size='sm'
-              variant='default'
-              className='flex-1 text-xs'
-              onClick={() => onViewAR(render.slug)}
-            >
-              <FiEye className='mr-1' />
-              Ver AR
-            </Button>
-            <div className='flex gap-2'>
-              <Button
-                size='sm'
-                variant='outline'
-                className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
-                onClick={() => onCopyLink(render.slug)}
-              >
-                <FiCopy className='mr-1' />
-                Copiar
-              </Button>
-              <Button
-                size='sm'
-                variant='outline'
-                className='flex-1 text-xs border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
-                onClick={() => onEdit(render.slug)}
-              >
-                <FiEdit3 className='mr-1' />
-                Editar
-              </Button>
-            </div>
-          </div>
-        </div>
-      </CardContent>
     </Card>
   );
 };

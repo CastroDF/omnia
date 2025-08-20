@@ -209,6 +209,46 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error uploading render:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+
+    // Log more detailed error information
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+
+    // Check for specific AWS/S3 errors
+    if (error && typeof error === 'object' && 'name' in error) {
+      if (error.name === 'CredentialsError') {
+        return NextResponse.json(
+          {
+            error: 'Error de credenciales AWS. Verifica AWS_ACCESS_KEY_ID y AWS_SECRET_ACCESS_KEY',
+          },
+          { status: 500 },
+        );
+      }
+      if (error.name === 'NoSuchBucket') {
+        return NextResponse.json(
+          {
+            error: 'Bucket S3 no encontrado. Verifica S3_BUCKET_NAME',
+          },
+          { status: 500 },
+        );
+      }
+      if (error.name === 'AccessDenied') {
+        return NextResponse.json(
+          {
+            error: 'Acceso denegado a S3. Verifica permisos de AWS',
+          },
+          { status: 500 },
+        );
+      }
+    }
+
+    return NextResponse.json(
+      {
+        error: 'Error interno del servidor. Revisa los logs para más detalles.',
+      },
+      { status: 500 },
+    );
   }
 }

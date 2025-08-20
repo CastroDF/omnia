@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RenderData } from '@/types/render';
@@ -255,7 +256,25 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
               <CardContent className='p-4 sm:p-8'>
                 <div className='flex justify-center'>
                   <div className='space-y-4 text-center max-w-md w-full'>
-                    <div className='text-4xl sm:text-6xl'>🥽</div>
+                    {/* Model Preview Image */}
+                    {render.files.previewImage ? (
+                      <div className='relative w-full aspect-square max-w-sm sm:max-w-md mx-auto mb-2'>
+                        <Image
+                          src={render.files.previewImage.url}
+                          alt={render.name}
+                          fill
+                          className='object-cover rounded-xl shadow-2xl border-2 border-gray-600/30'
+                          sizes='(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 400px, 500px'
+                          priority
+                        />
+                        {/* AR Badge overlay */}
+                        <div className='absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg'>
+                          AR
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='text-4xl sm:text-6xl mb-2'>🥽</div>
+                    )}
                     <h2 className='text-lg sm:text-xl font-bold text-white'>
                       Experiencia AR Lista
                     </h2>
@@ -303,6 +322,20 @@ export default function RenderViewerR3F({ render }: RenderViewerProps) {
             {/* Instructions Card */}
             <Card className='bg-gray-800 border-gray-700'>
               <CardContent className='p-4 sm:p-6'>
+                {/* Model Image Header */}
+                {render.files.previewImage && (
+                  <div className='flex justify-center mb-6'>
+                    <div className='relative w-24 h-24 sm:w-32 sm:h-32'>
+                      <Image
+                        src={render.files.previewImage.url}
+                        alt={render.name}
+                        fill
+                        className='object-cover rounded-lg shadow-lg'
+                        sizes='(max-width: 640px) 96px, 128px'
+                      />
+                    </div>
+                  </div>
+                )}
                 <h3 className='text-lg font-bold mb-4 text-white'>Instrucciones para AR</h3>
                 <div className='space-y-4 text-sm text-gray-300'>
                   <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
